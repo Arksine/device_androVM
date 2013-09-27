@@ -1,0 +1,2 @@
+add_lunch_combo vbox86p-userdebug
+add_lunch_combo vbox86p-eng

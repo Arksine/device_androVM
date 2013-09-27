@@ -1,0 +1,4 @@
+# system.prop for vbox86
+ro.kernel.qemu.gles=1
+dalvik.vm.heapsize=32m
+# end system.prop for vbox86
