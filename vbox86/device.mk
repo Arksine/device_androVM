@@ -108,6 +108,14 @@ PRODUCT_PACKAGES += \
     genyd \
     gps.vbox86 \
     local_gps \
+    libGLESv1_CM_emulation \
+    lib_renderControl_enc \
+    libEGL_emulation \
+    libGLESv2_enc \
+    libOpenglSystemCommon \
+    libGLESv2_emulation \
+    libGLESv1_enc \
+    gralloc.vbox86 \
 
 
 $(call inherit-product-if-exists,frameworks/base/build/tablet-dalvik-heap.mk)
