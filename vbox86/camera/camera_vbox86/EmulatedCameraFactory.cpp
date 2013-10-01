@@ -291,7 +291,7 @@ void EmulatedCameraFactory::createGenyCameras()
              __FUNCTION__, num + 1);
         return;
     }
-    memset(mEmulatedCameras, 0, sizeof(EmulatedBaseCamera*) * (num + 1));
+    memset(mEmulatedCameras, 0, sizeof(EmulatedBaseCamera*) * num);
 
     int index = 0;
     /* Create and initialize back camera. */
