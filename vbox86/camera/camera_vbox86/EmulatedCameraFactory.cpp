@@ -288,7 +288,7 @@ void EmulatedCameraFactory::createGenyCameras()
     mEmulatedCameras = new EmulatedBaseCamera*[num];
     if (mEmulatedCameras == NULL) {
         ALOGE("%s: Unable to allocate emulated camera array for %d entries",
-             __FUNCTION__, num + 1);
+             __FUNCTION__, num);
         return;
     }
     memset(mEmulatedCameras, 0, sizeof(EmulatedBaseCamera*) * num);
