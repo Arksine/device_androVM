@@ -389,6 +389,9 @@ int main(int argc, char **argv)
                 btn_touch(uinp_fd, &event, 0);
                 abs_mt_pressure(uinp_fd, &event, 0);
 
+                abs_mt_position_x(uinp_fd, &event, parameters[0]);
+                abs_mt_position_y(uinp_fd, &event, parameters[1]);
+
                 input_mt_sync(uinp_fd, &event);
                 input_sync(uinp_fd, &event);
             }
