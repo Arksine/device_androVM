@@ -22,10 +22,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <netinet/tcp.h>
+#include <netinet/in.h>
 
 #include <cutils/log.h>
 #include <cutils/properties.h>
 #include <cutils/str_parms.h>
+#include <cutils/sockets.h>
 
 #include <hardware/audio.h>
 #include <hardware/hardware.h>
@@ -125,6 +128,8 @@ struct stream_out {
     int buffer_type;
 
     struct audio_device *dev;
+
+    int pcm_server_socket;
 };
 
 struct stream_in {
@@ -725,6 +730,11 @@ static ssize_t out_write(struct audio_stream_out *stream, const void* buffer,
         }
     }
 
+    if(out->pcm_server_socket) {
+        // pcm server connected, send audio data
+         write(out->pcm_server_socket, in_buffer, out_frames * frame_size);
+    }
+
     ret = pcm_write(out->pcm, in_buffer, out_frames * frame_size);
     if (ret == -EPIPE) {
         /* In case of underrun, don't sleep since we want to catch up asap */
@@ -961,6 +971,78 @@ static int in_remove_audio_effect(const struct audio_stream *stream,
 }
 
 
+static void *start_pcm_server(void* arg)
+{
+    struct stream_out *out = (struct stream_out *)arg;
+
+    ALOGI("out sampling rate %d", pcm_config_out.rate);
+
+    // Wait forever for a new connection
+    while(1) {
+        int ssocket;
+        int csocket;
+
+        ssocket = socket_inaddr_any_server(24296, SOCK_STREAM);
+
+        if (ssocket < 0) {
+            ALOGE("Unable to start listening pcm server");
+            break;
+        }
+
+        // waiting for new connection
+        csocket = accept(ssocket, NULL, NULL);
+
+        if (csocket < 0) {
+            ALOGE("Unable to accept connection to pcm server");
+            close(ssocket);
+            break;
+        }
+
+        ALOGI("pcm server connected");
+
+        int opt_nodelay = 1;
+        setsockopt(csocket, IPPROTO_TCP, TCP_NODELAY, &opt_nodelay, sizeof(opt_nodelay));
+
+        close(ssocket);
+
+        ALOGI("pcm server starting");
+        out->pcm_server_socket = csocket;
+
+        // Waiting forever for new messages
+        while(1) {
+            fd_set set_read;
+            char buf;
+
+            FD_ZERO(&set_read);
+            FD_SET(csocket, &set_read);
+
+            if(select(csocket+1, &set_read, NULL, NULL, NULL) <= 0) {
+                ALOGE("pcm server error during select");
+                break;
+            }
+
+            // Wen a client socket disconnect, select signal read activitie
+            // on the corresponding socket, but read operation will return zero
+            // bytes. This is the best way to detect disconnection
+            if(read(csocket, &buf, 1) <= 0) {
+                ALOGI("pcm server lost connection");
+                break;
+            }
+
+            ALOGI("pcm server receive message %s", buf);
+        }
+        // close and wait for a new connection
+        // modification to out should be protected by mutex
+        // but it makes the audio driver hang for to long
+        // and android applications doesn't support it
+        out->pcm_server_socket = 0;
+        close(csocket);
+        ALOGI("pcm server closed");
+    }
+
+    return NULL;
+}
+
 static int adev_open_output_stream(struct audio_hw_device *dev,
                                    audio_io_handle_t handle,
                                    audio_devices_t devices,
@@ -1003,6 +1085,15 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
     out->standby = true;
 
     *stream_out = &out->stream;
+
+    ALOGI("Starting pcm server");
+    pthread_t server_thread;
+    out->pcm_server_socket = 0;
+    // Device open, start a new pcm server in a different thread
+    if (pthread_create(&server_thread, NULL, start_pcm_server, (void*)out)) {
+        ALOGE("Unable to create pcm_server_open thread");
+    }
+
     return 0;
 
 err_open:
@@ -1014,6 +1105,7 @@ err_open:
 static void adev_close_output_stream(struct audio_hw_device *dev,
                                      struct audio_stream_out *stream)
 {
+    ALOGI("adev_close_output_stream");
     out_standby(&stream->common);
     free(stream);
 }
