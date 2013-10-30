@@ -17,6 +17,8 @@
 # This is a build configuration for the product aspects that
 # are specific to the emulator.
 
+DEVICE_PACKAGE_OVERLAYS		+= device/androVM/vbox86/overlay
+
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.ril.hsxpa=1 \
     ro.ril.gprsclass=10 \
