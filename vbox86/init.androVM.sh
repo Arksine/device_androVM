@@ -124,11 +124,5 @@ if [ ! $abi2_set ]; then
     setprop ro.product.cpu.abi2 armeabi-v7a
   fi
 fi
-abi3_set=`getprop ro.product.cpu.abi3`
-if [ ! $abi3_set ]; then
-  if [ -f /system/lib/libhoudini.so ]; then
-    setprop ro.product.cpu.abi3 armeabi
-  fi
-fi
 
 setprop androVM.inited 1
