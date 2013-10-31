@@ -49,6 +49,7 @@ message Parameter {
     Accelerometer      = 12; // acceleration: string "%f|%f|%f" (float in m/s^2)
     GenymotionVersion  = 13; // string
     Capabilities       = 14; // JSON string
+    FileName           = 15; // string
   }
 
   required Type  type = 1;
@@ -61,6 +62,8 @@ message Request {
     Ping            = 1;
     GetParam        = 2;
     SetParam        = 3;
+    CheckArchive    = 4;
+    FlashArchive    = 5;
   }
 
   required  Type       type        = 1;
