@@ -124,5 +124,8 @@ if [ ! $abi2_set ]; then
     setprop ro.product.cpu.abi2 armeabi-v7a
   fi
 fi
+if [ -f /system/lib/libhoudini.so ]; then
+  setprop dalvik.vm.houdini on
+fi
 
 setprop androVM.inited 1
