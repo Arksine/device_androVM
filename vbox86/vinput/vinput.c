@@ -157,12 +157,13 @@ int main(int argc, char **argv)
 
             pcmd=pb=mbuf;
 
-            if ((pe=strchr(mbuf,'\n')))
-                *pe='\0';
+            if ((pe = strchr(mbuf, '\n'))) {
+                *pe = '\0';
+            }
 
-            while(pb && (pe=strchr(pb,':'))) {
-                *pe='\0';
-                pb=++pe;
+            while (pb && (pe = strchr(pb,':'))) {
+                *pe = '\0';
+                pb = ++pe;
                 parameters[nbInput++] = atoi(pb);
             }
 
@@ -174,8 +175,9 @@ int main(int argc, char **argv)
             gettimeofday(&event.time, NULL);
 
             if (!strcmp(pcmd,"CONFIG")) {
-                if (nbInput < 2)
+                if (nbInput < 2) {
                     continue;
+                }
 
                 // Create ABS input device
                 if (!(uinp_fd = open("/dev/uinput", O_WRONLY|O_NDELAY))) {
@@ -198,8 +200,9 @@ int main(int argc, char **argv)
                 ioctl(uinp_fd, UI_SET_ABSBIT, ABS_MT_POSITION_Y);
                 ioctl(uinp_fd, UI_SET_ABSBIT, ABS_MT_PRESSURE);
                 if (!keyboard_disabled) {
-                    for (i=0;i<256;i++)
+                    for (i=0;i<256;i++) {
                         ioctl(uinp_fd, UI_SET_KEYBIT, i);
+                    }
                 }
                 ioctl(uinp_fd, UI_SET_KEYBIT, BTN_TOUCH);
                 ioctl(uinp_fd, UI_SET_KEYBIT, BTN_LEFT);
@@ -214,8 +217,9 @@ int main(int argc, char **argv)
                 }
             }
             else if (!strcmp(pcmd,"MOUSE")) {
-                if (nbInput < 2)
+                if (nbInput < 2) {
                     continue;
+                }
 
                 if (mouse_state == MOUSE_STATE_CLICKED) {
                     abs_mt_position_x(uinp_fd, &event, parameters[0]);
@@ -228,7 +232,7 @@ int main(int argc, char **argv)
                     int xpos, ypos, r_finger_x, r_finger_y, l_finger_x, l_finger_y, delta = 0;
 #if DEBUG_MT
                     SLOGD("MOUSE: multitouch mode %d orientation:%d x:%s y:%s saved x:%d saved y:%d",
-                          mouse_state, orientation, p[0], p[1], last_fixed_xpos, last_fixed_ypos);
+                          mouse_state, orientation, parameters[0], parameters[1], last_fixed_xpos, last_fixed_ypos);
 #endif /* DEBUG_MT */
                     xpos = parameters[0];
                     ypos = parameters[1];
@@ -351,8 +355,9 @@ int main(int argc, char **argv)
                 }
             }
             else if (!strcmp(pcmd,"WHEEL")) {
-                if (nbInput < 4)
+                if (nbInput < 4) {
                     continue;
+                }
                 abs_mt_position_x(uinp_fd, &event, parameters[0]);
                 abs_mt_position_y(uinp_fd, &event, parameters[1]);
                 wheel_event(uinp_fd, &event, REL_WHEEL, parameters[2]);
@@ -360,8 +365,9 @@ int main(int argc, char **argv)
                 input_sync(uinp_fd, &event);
             }
             else if (!strcmp(pcmd,"MSBPR")) {
-                if (nbInput < 2)
+                if (nbInput < 2) {
                     continue;
+                }
                 mouse_state = MOUSE_STATE_CLICKED;
 
                 btn_touch(uinp_fd, &event, 1);
@@ -374,13 +380,17 @@ int main(int argc, char **argv)
                 input_sync(uinp_fd, &event);
             }
             else if (!strcmp(pcmd,"MSBRL")) {
-                if (nbInput < 2)
+                if (nbInput < 2) {
                     continue;
+                }
                 // reset mouse state on release
                 mouse_state = MOUSE_STATE_NO_CLICK;
 
                 btn_touch(uinp_fd, &event, 0);
                 abs_mt_pressure(uinp_fd, &event, 0);
+
+                abs_mt_position_x(uinp_fd, &event, parameters[0]);
+                abs_mt_position_y(uinp_fd, &event, parameters[1]);
 
                 input_mt_sync(uinp_fd, &event);
                 input_sync(uinp_fd, &event);
@@ -388,10 +398,11 @@ int main(int argc, char **argv)
             /**** MOUSE MULTITOUCH PRESSED ****/
             else if (!strcmp(pcmd,"MSMTPR")) {
                 int xpos, ypos, r_finger_x, r_finger_y, l_finger_x, l_finger_y, mode;
-                if (nbInput < 4)
+                if (nbInput < 4) {
                     continue;
+                }
 #if DEBUG_MT
-                SLOGD("MSMTPR:%s:%s:%s:%s", p[0], p[1], p[2], p[3]);
+                SLOGD("MSMTPR:%s:%s:%s:%s", parameters[0], parameters[1], parameters[2], parameters[3]);
 #endif /* DEBUG_MT */
 
                 xpos = parameters[0];
@@ -423,6 +434,7 @@ int main(int argc, char **argv)
                 if (last_fixed_xpos - centeroffset < 0) {
                     centeroffset = last_fixed_xpos;
                 }
+
                 if (last_fixed_ypos - centeroffset < 0) {
                     centeroffset = last_fixed_ypos;
                 }
@@ -473,10 +485,12 @@ int main(int argc, char **argv)
             }
             /**** MOUSE MULTITOUCH RELEASED ****/
             else if (!strcmp(pcmd,"MSMTRL")) {
-                if (nbInput < 2)
+                if (nbInput < 2) {
                     continue;
+                }
+
 #if DEBUG_MT
-                SLOGD("MSMTRL:%s:%s", p[0], p[1]);
+                SLOGD("MSMTRL:%s:%s", parameters[0], parameters[1]);
 #endif /* DEBUG_MT */
 
                 // reset mouse state on release
@@ -490,8 +504,9 @@ int main(int argc, char **argv)
                 input_sync(uinp_fd, &event);
             }
             else if (!strcmp(pcmd,"KBDPR")) {
-                if (nbInput < 2)
+                if (nbInput < 2) {
                     continue;
+                }
                 event.type = EV_KEY;
                 event.code = parameters[0];
                 event.value = 1;
@@ -499,8 +514,9 @@ int main(int argc, char **argv)
                 input_sync(uinp_fd, &event);
             }
             else if (!strcmp(pcmd,"KBDRL")) {
-                if (nbInput < 2)
+                if (nbInput < 2) {
                     continue;
+                }
                 event.type = EV_KEY;
                 event.code = parameters[0];
                 event.value = 0;
@@ -510,14 +526,15 @@ int main(int argc, char **argv)
             else if (!strcmp(pcmd,"MULTI")) {
                 int i;
 
-                // p[0] -> nb pointers
-                // p[1] -> action type
-                // p[2*i+2] -> x[i]
-                // p[2*i+3] -> y[i]
+                // parameters[0] -> nb pointers
+                // parameters[1] -> action type
+                // parameters[2*i+2] -> x[i]
+                // parameters[2*i+3] -> y[i]
 
                 // assertion !
-                if (nbInput != (2*parameters[0]+2))
+                if (nbInput != (2 * parameters[0] + 2)) {
                     continue;
+                }
 
                 switch(parameters[1]) {
                 case ACTION_MOVE:
