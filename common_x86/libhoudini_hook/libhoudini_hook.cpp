@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <cutils/log.h>
+#include <cutils/properties.h>
 #include <dlfcn.h>
 #include <fcntl.h>
 
@@ -11,90 +12,181 @@ namespace houdini {
     void  hookCreateActivity(bool useHoudini, void* createActivityFunc, void* activity, void*houdiniActivity, void* savedState, size_t savedStateSize);
     int hookJniOnload(bool useHoudini, void* func, void* jniVm, void* arg);
 
-static bool (*h_dvmHoudini_hookCheckMethod)(void*) = NULL;
-static void (*h_dvmHoudini_dvmHookPlatformInvoke)(void*, void*, int, int, const int*, const char*, void*, void*) = NULL;
-static void* (*h_dvmHoudini_hookDlopen)(const char*, int, bool*) = NULL;
-static void* (*h_dvmHoudini_hookDlsym)(bool, void*, const char*) = NULL;
-static void (*h_dvmHoudini_hookCreateActivity)(bool, void*, void*, void*, void*, size_t) = NULL;
-static int (*h_dvmHoudini_hookJniOnload)(bool, void*, void*, void*);
+    /*
+     * Type definition for Houdini
+     */
+    typedef int(*dvm2hdInit_ptr_t)(void*);
+    typedef void*(*dvm2hdDlopen_ptr_t)(const char*, int);
+    typedef void*(*dvm2hdDlsym_ptr_t)(void*,const char*);
+    typedef int(*dvm2hdNativeMethodHelper_ptr_t)(bool, void*, unsigned char,
+               void*, unsigned int, const unsigned char*, const void **);
+    typedef bool(*dvm2hdNeeded_ptr_t)(void*);
+    typedef int (*HOUDINI_CREATE_ACTIVITY)(void *funcPt,void *x86Code,void *houdiniCode,void *rawSavedState,size_t rawSavedSize);
 
-static inline void init_dvm_houdini() {
-    static void *h_handle = NULL;
+    dvm2hdInit_ptr_t               dvm2hdInit;
+    dvm2hdDlopen_ptr_t             dvm2hdDlopen;
+    dvm2hdDlsym_ptr_t              dvm2hdDlsym;
+    dvm2hdNativeMethodHelper_ptr_t dvm2hdNativeMethodHelper;
+    dvm2hdNeeded_ptr_t             dvm2hdNeeded;
+    HOUDINI_CREATE_ACTIVITY        houdiniCreateActivity;
+    bool                           libhoudiniInited=false;
 
-    if (h_handle)
-        return;
+#define HOUDINI_PATH       "/system/lib/libhoudini.so"
+#define HOUDINI_BUILD_PROP "dalvik.vm.houdini"
 
-    h_handle = dlopen("/system/lib/libdvm_houdini.so", RTLD_LAZY);
-    if (!h_handle) {
-        ALOGE("Unable to open libdvm_houdini lib: %s\n", dlerror());
-        return;
-    }
+/*
+ * Get the shorty string for a method.
+ */
+struct DexProto {
+    const void* dexFile;     /* file the idx refers to */
+    uint32_t protoIdx;                /* index into proto_ids table of dexFile */
+};
+struct fake_Method {
+    void*    clazz;
+    uint32_t accessFlags;
+    uint16_t methodIndex;
+    uint16_t registersSize;  /* ins + locals */
+    uint16_t outsSize;
+    uint16_t insSize;
+    const char*     name;
+    DexProto        prototype;
+    const char*     shorty;
+};
 
-    *(void **)(&h_dvmHoudini_hookCheckMethod) = dlsym(h_handle, "_ZN7houdini15hookCheckMethodEPv");
-    if (!h_dvmHoudini_hookCheckMethod)
-        ALOGE("Unable to find hookCheckMethod() function");
-
-    *(void **)(&h_dvmHoudini_dvmHookPlatformInvoke) = dlsym(h_handle, "_ZN7houdini21dvmHookPlatformInvokeEPvS0_iiPKiPKcS0_S0_");
-    if (!h_dvmHoudini_dvmHookPlatformInvoke)
-        ALOGE("Unable to find dvmHookPlatformInvoke() function");
-
-    *(void **)(&h_dvmHoudini_hookDlopen) = dlsym(h_handle, "_ZN7houdini10hookDlopenEPKciPb");
-    if (!h_dvmHoudini_hookDlopen)
-        ALOGE("Unable to find hookDlopen() function");
-
-    *(void **)(&h_dvmHoudini_hookDlsym) = dlsym(h_handle, "_ZN7houdini9hookDlsymEbPvPKc");
-    if (!h_dvmHoudini_hookDlsym)
-        ALOGE("Unable to find hookDlsym() function");
-
-    *(void **)(&h_dvmHoudini_hookCreateActivity) = dlsym(h_handle, "_ZN7houdini18hookCreateActivityEbPvS0_S0_S0_j");
-    if (!h_dvmHoudini_hookCreateActivity)
-        ALOGE("Unable to find hookCreateActivity() function");
-
-    *(void **)(&h_dvmHoudini_hookJniOnload) = dlsym(h_handle, "_ZN7houdini13hookJniOnloadEbPvS0_S0_");
-    if (!h_dvmHoudini_hookJniOnload)
-        ALOGE("Unable to find hookJniOnload() function");
-}
-
-bool hookCheckMethod(void *fnPtr) {
-    init_dvm_houdini();
-    if (h_dvmHoudini_hookCheckMethod)
-        return (*h_dvmHoudini_hookCheckMethod)(fnPtr);
-    return false;
-}
-
-void dvmHookPlatformInvoke(void* pEnv, void* clazz, int argInfo, int argc, const int* argv, const char* shorty, void* func, void* pReturn) {
-    init_dvm_houdini();
-    if (h_dvmHoudini_dvmHookPlatformInvoke) 
-        (*h_dvmHoudini_dvmHookPlatformInvoke)(pEnv, clazz, argInfo, argc, argv, shorty, func, pReturn);
+const char* dvmGetMethodShorty(const struct fake_Method* meth)
+{
+    return meth->shorty;
 }
 
 void* hookDlopen(const char* filename, int flag, bool* useHoudini) {
-    init_dvm_houdini();
-    *useHoudini = 0;
-    if (h_dvmHoudini_hookDlopen)
-        return (*h_dvmHoudini_hookDlopen)(filename, flag, useHoudini);
+    void *native_handle;
+
+    native_handle = dlopen(filename, flag);
+    if (native_handle) {
+        *useHoudini = false;
+        return native_handle;
+    }
+
+    void *handle;
+
+    struct dvm2hdEnv {
+        void *logger;
+        void *getShorty;
+    } env;
+
+    char propBuf[PROPERTY_VALUE_MAX];
+    property_get(HOUDINI_BUILD_PROP, propBuf, "");
+    //setting HOUDINI_BUILD_PROP to "on" will enable houdini
+    if(strncmp(propBuf, "on", sizeof(propBuf)) && strncmp(propBuf, "", sizeof(propBuf))) {
+        return NULL;
+    }
+
+    env.logger = (void*)__android_log_print;
+    env.getShorty = (void*)dvmGetMethodShorty;
+    if (!libhoudiniInited) {
+        //TODO: hard code the path currently
+        handle = dlopen(HOUDINI_PATH,RTLD_NOW);
+        if (handle == NULL) {
+            return NULL;
+        }
+        dvm2hdInit = (dvm2hdInit_ptr_t)dlsym(handle, "dvm2hdInit");
+        if (dvm2hdInit == NULL) {
+            ALOGE("Cannot find symbol dvm2hdInit, please check the libhoudini library is correct: %s!\n", dlerror());
+            return NULL;
+        }
+        if (!dvm2hdInit((void*)&env)) {
+            ALOGE("libhoudini init failed!\n");
+            return NULL;
+        }
+
+        dvm2hdDlopen = (dvm2hdDlopen_ptr_t)dlsym(handle, "dvm2hdDlopen");
+        dvm2hdDlsym = (dvm2hdDlsym_ptr_t)dlsym(handle, "dvm2hdDlsym");
+        dvm2hdNeeded = (dvm2hdNeeded_ptr_t)dlsym(handle, "dvm2hdNeeded");
+        dvm2hdNativeMethodHelper = (dvm2hdNativeMethodHelper_ptr_t)dlsym(handle, "dvm2hdNativeMethodHelper");
+        houdiniCreateActivity = (HOUDINI_CREATE_ACTIVITY)dlsym(handle, "androidrt2hdCreateActivity");
+        if (!dvm2hdDlopen || !dvm2hdDlsym || !dvm2hdNeeded || !dvm2hdNativeMethodHelper || !houdiniCreateActivity) {
+            ALOGE("The library symbol is missing, please check the libhoudini library is correct: %s!\n", dlerror());
+            return NULL;
+        }
+        libhoudiniInited = true;
+    }
+
+    *useHoudini = true;
+    return dvm2hdDlopen(filename, flag);
+}
+
+bool hookCheckMethod(void *fnPtr) {
+    if (libhoudiniInited)
+        return dvm2hdNeeded(fnPtr);
     else
-        return dlopen(filename, flag);
+        return false;
+}
+
+void dvmHookPlatformInvoke(void* pEnv, void* clazz, int argInfo, int argc, const int* argv, const char* shorty, void* func, void* pReturn) {
+    const int kMaxArgs = ((argc >= 0) ? argc : 0)+2;    /* +1 for env, maybe +1 for clazz */
+    unsigned char types[kMaxArgs+1];
+    void* values[kMaxArgs];
+    char retType;
+    char sigByte;
+    int dstArg;
+
+    if (!libhoudiniInited) {
+        ALOGE("dvmHookPlatformInvoke() called but houdini not inited");
+        return;
+    }
+
+    types[0] = 'L';
+    values[0] = &pEnv;
+
+    types[1] = 'L';
+    if (clazz != NULL) {
+        values[1] = &clazz;
+    } else {
+        values[1] = (void*)argv++;
+    }
+    dstArg = 2;
+
+    /*
+     * Scan the types out of the short signature.  Use them to fill out the
+     * "types" array.  Store the start address of the argument in "values".
+     */
+    retType = *shorty;
+    while ((sigByte = *++shorty) != '\0') {
+        types[dstArg] = sigByte;
+        values[dstArg++] = (void*)argv++;
+        if (sigByte == 'D' || sigByte == 'J') {
+            argv++;
+        }
+    }
+    types[dstArg] = '\0';
+
+    dvm2hdNativeMethodHelper(false, func, retType, pReturn, dstArg, types, (const void**)values);
 }
 
 void* hookDlsym(bool useHoudini, void* handle, const char* symbol) {
-    init_dvm_houdini();
-    if (h_dvmHoudini_hookDlsym)
-        return (*h_dvmHoudini_hookDlsym)(useHoudini, handle, symbol);
+    if (libhoudiniInited && useHoudini)
+        return dvm2hdDlsym(handle, symbol);
     else
         return dlsym(handle, symbol);
 }
 
 void hookCreateActivity(bool useHoudini, void* createActivityFunc, void* activity, void*houdiniActivity, void* savedState, size_t savedStateSize) {
-    init_dvm_houdini();
-    if (h_dvmHoudini_hookCreateActivity)
-        return (*h_dvmHoudini_hookCreateActivity)(useHoudini, createActivityFunc, activity, houdiniActivity, savedState, savedStateSize);
+    if (libhoudiniInited && useHoudini) {
+        houdiniCreateActivity(createActivityFunc, activity, houdiniActivity, savedState, savedStateSize);
+    }
+    else {
+        void (*f)(void*, void*, size_t) = (void (*)(void*, void*, size_t))createActivityFunc;
+        (*f)(activity, savedState, savedStateSize);
+    }
 }
 
 int hookJniOnload(bool useHoudini, void* func, void* jniVm, void* arg) {
-    init_dvm_houdini();
-    if (h_dvmHoudini_hookJniOnload)
-        return (*h_dvmHoudini_hookJniOnload)(useHoudini, func, jniVm, arg);
+    if (libhoudiniInited && useHoudini) {
+        const void* argv[] = {jniVm, NULL};//{gDvm.vmList, NULL};
+        int version;
+        dvm2hdNativeMethodHelper(true, (void*)func, 'I', (void*)&version, 2, NULL, argv);
+        return version;
+    }
     else {
         int (*f)(void*, void*) = (int (*)(void*, void*))func;
         return (*f)(jniVm, NULL);
