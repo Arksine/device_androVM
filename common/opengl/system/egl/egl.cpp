@@ -588,6 +588,9 @@ EGLBoolean eglChooseConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig 
     DEFINE_AND_VALIDATE_HOST_CONNECTION(EGL_FALSE);
     *num_config = rcEnc->rcChooseConfig(rcEnc, (EGLint*)attrib_list, attribs_size * sizeof(EGLint), (uint32_t*)configs, config_size);
 
+    if (*num_config <= 0)
+        return EGL_FALSE;
+
     return EGL_TRUE;
 }
 
@@ -1156,8 +1159,6 @@ EGLImageKHR eglCreateImageKHR(EGLDisplay dpy, EGLContext ctx, EGLenum target, EG
         case HAL_PIXEL_FORMAT_RGB_888:
         case HAL_PIXEL_FORMAT_RGB_565:
         case HAL_PIXEL_FORMAT_BGRA_8888:
-        case HAL_PIXEL_FORMAT_RGBA_5551:
-        case HAL_PIXEL_FORMAT_RGBA_4444:
             break;
         default:
             setErrorReturn(EGL_BAD_PARAMETER, EGL_NO_IMAGE_KHR);
