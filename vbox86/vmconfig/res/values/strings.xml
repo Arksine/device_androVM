@@ -9,7 +9,6 @@
     <string name="resolution">Resolution </string>
     <string name="dpi">DPI </string>
     <string name="opengl_disable_render">Disable OpenGL render in UI</string>
-    <string name="opengl_force_IP">Force host IP address</string>
     <string name="keyboard">Keyboard </string>
     <string name="statusbar">Force StatusBar</string>
     <string name="su_bypass">Always allow su access (bypass Superuser app)</string>
