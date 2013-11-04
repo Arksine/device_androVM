@@ -60,6 +60,3 @@ USE_OPENGL_RENDERER := true
 
 #HOUDINI
 INTEL_HOUDINI := true
-
-# Path to the Gapps file that will be use to install Google apps & co
-GAPPS_ARCHIVE_FILE := /srv/buildbot/bin/gapps/addon-4.1.1-20130604.tgz
