@@ -7,8 +7,8 @@
 #include "dispatcher.hpp"
 #include "libgenyd.hpp"
 
-#define CHECK_ARCHIVE_SCRIPT "/system/bin/check-archive.sh "
-#define FLASH_ARCHIVE_SCRIPT "/system/bin/flash-archive.sh "
+#define CHECK_ARCHIVE_SCRIPT "sh /system/bin/check-archive.sh "
+#define FLASH_ARCHIVE_SCRIPT "sh /system/bin/flash-archive.sh "
 
 void Dispatcher::checkArchive(const Request &request, Reply *reply)
 {
