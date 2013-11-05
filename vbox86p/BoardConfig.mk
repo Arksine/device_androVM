@@ -5,10 +5,10 @@ BOARD_WPA_SUPPLICANT_DRIVER :=
 BUILD_EMULATOR_OPENGL:=true
 TARGET_ARCH_VARIANT := x86
 TARGET_ARCH := x86
-BOARD_KERNEL_CMDLINE += SDCARD=sda
 BOARD_SYSTEMIMAGE_PARTITION_SIZE := 1024M
+BOARD_USES_GENERIC_AUDIO := false
 BOARD_USES_ALSA_AUDIO := true
 BUILD_WITH_ALSA_UTILS := true
 TARGET_NO_KERNEL := false
-BOARD_KERNEL_CMDLINE := init=/init console=ttyS0,115200 console=tty0 androidboot.hardware=vbox86 androidboot.console=ttyS0
-
+BOARD_KERNEL_CMDLINE := init=/init console=tty0 quiet androidboot.hardware=vbox86 androidboot.console=tty0
+TARGET_SHELL := mksh

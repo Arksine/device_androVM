@@ -1,8 +1,9 @@
 on init
    export HWACCEL 1
 
-service network /system/bin/netcfg eth0 dhcp
+service vbox86-setup /system/etc/init.androVM.sh
     oneshot
+    class very-first
 
 service local_opengl /system/bin/local_opengl
 

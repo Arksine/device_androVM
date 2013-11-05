@@ -131,6 +131,8 @@ int main(int argc, char *argv[]) {
                 uinp.absmax[ABS_MT_POSITION_X]=atoi(p1);
                 uinp.absmin[ABS_MT_POSITION_Y]=0;
                 uinp.absmax[ABS_MT_POSITION_Y]=atoi(p2);
+                uinp.absmin[ABS_MT_PRESSURE]=0;
+                uinp.absmax[ABS_MT_PRESSURE]=1;
                 ioctl(uinp_fd, UI_SET_EVBIT, EV_KEY);
                 ioctl(uinp_fd, UI_SET_EVBIT, EV_ABS);
                 ioctl(uinp_fd, UI_SET_ABSBIT, ABS_MT_POSITION_X);
