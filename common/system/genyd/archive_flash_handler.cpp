@@ -13,7 +13,7 @@
 void Dispatcher::checkArchive(const Request &request, Reply *reply)
 {
     std::string archive_path = request.parameter().value().stringvalue();
-    
+
     SLOGD("Received CheckArchive %s", archive_path.c_str());
 
     std::string script = CHECK_ARCHIVE_SCRIPT;
