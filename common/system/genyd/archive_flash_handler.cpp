@@ -7,8 +7,9 @@
 #include "dispatcher.hpp"
 #include "libgenyd.hpp"
 
-#define CHECK_ARCHIVE_SCRIPT "sh /system/bin/check-archive.sh \""
-#define FLASH_ARCHIVE_SCRIPT "sh /system/bin/flash-archive.sh \""
+#define SH_PATH              "/system/bin/sh"
+#define CHECK_ARCHIVE_SCRIPT "/system/bin/check-archive.sh"
+#define FLASH_ARCHIVE_SCRIPT "/system/bin/flash-archive.sh"
 
 void Dispatcher::checkArchive(const Request &request, Reply *reply)
 {
@@ -16,8 +17,9 @@ void Dispatcher::checkArchive(const Request &request, Reply *reply)
 
     SLOGD("Received CheckArchive %s", archive_path.c_str());
 
-    std::string script = CHECK_ARCHIVE_SCRIPT;
-    std::string cmd = script + archive_path + "\"";
+    std::string cmd = std::string(SH_PATH) + " " +
+                      CHECK_ARCHIVE_SCRIPT + " " +
+                      "\"" + archive_path + "\"";
 
     reply->set_type(Reply::Error);
     Status *status = reply->mutable_status();
@@ -40,8 +42,9 @@ void Dispatcher::flashArchive(const Request &request, Reply *reply)
 
     SLOGD("Received FlashArchive %s", archive_path.c_str());
 
-    std::string script = FLASH_ARCHIVE_SCRIPT;
-    std::string cmd = script + archive_path + "\"";
+    std::string cmd = std::string(SH_PATH) + " " +
+                      FLASH_ARCHIVE_SCRIPT + " " +
+                      "\"" + archive_path + "\"";
 
     reply->set_type(Reply::Error);
     Status *status = reply->mutable_status();
