@@ -133,6 +133,48 @@ void Dispatcher::treatSetParam(const Request &request, Reply *reply)
     }
 }
 
+void Dispatcher::treatCheckArchive(const Request &request, Reply *reply)
+{
+    if (!request.has_parameter()) {
+        reply->set_type(Reply::Error);
+        Status *status = reply->mutable_status();
+        status->set_code(Status::GenericError);
+        return;
+    }
+
+    Parameter param = request.parameter();
+
+    if (!param.has_value()) {
+        reply->set_type(Reply::Error);
+        Status *status = reply->mutable_status();
+        status->set_code(Status::GenericError);
+        return;
+    }
+
+    checkArchive(request, reply);
+}
+
+void Dispatcher::treatFlashArchive(const Request &request, Reply *reply)
+{
+    if (!request.has_parameter()) {
+        reply->set_type(Reply::Error);
+        Status *status = reply->mutable_status();
+        status->set_code(Status::GenericError);
+        return;
+    }
+
+    Parameter param = request.parameter();
+
+    if (!param.has_value()) {
+        reply->set_type(Reply::Error);
+        Status *status = reply->mutable_status();
+        status->set_code(Status::GenericError);
+        return;
+    }
+
+    flashArchive(request, reply);
+}
+
 void Dispatcher::unknownRequest(const Request &request, Reply *reply)
 {
     SLOGD("Received unknown request");
@@ -158,6 +200,12 @@ Reply *Dispatcher::dispatchRequest(const Request &request)
     case Request::GetParam:
         treatGetParam(request, reply);
         break;
+    case Request::CheckArchive:
+        treatCheckArchive(request, reply);
+        break;
+    case Request::FlashArchive:
+        treatFlashArchive(request, reply);
+	break;
     default:
         unknownRequest(request, reply);
         break;
