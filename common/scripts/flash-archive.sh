@@ -108,7 +108,7 @@ create_tmp_dir() {
 }
 
 unzip_archive_in_tmp_dir() {
-  if ! unzip "$1" -d "$TMP_DIR"; then
+  if ! miniunzip "$1" -d "$TMP_DIR"; then
     exit_on_error "[ERROR][unzip_archive_in_tmp_dir] unzip failed : $1"
   fi
 }

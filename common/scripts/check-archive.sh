@@ -26,7 +26,7 @@ case "$ZIPFILE" in
 esac
 
 # Checking zip content
-RESULT=`unzip -l "$ZIPFILE" 2> /dev/null | grep " system/" | wc -l`
+RESULT=`miniunzip -l "$ZIPFILE" 2> /dev/null | grep " system/" | wc -l`
 if [ "$RESULT" -gt 0 ]
 then
   # We found a system/ directory

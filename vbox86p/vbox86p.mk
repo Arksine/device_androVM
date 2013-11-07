@@ -23,6 +23,7 @@ PRODUCT_PACKAGES += libGLESv1_enc \
         androVM-vbox-sf \
         androVM_setprop \
         busybox \
+        miniunzip \
         genyd \
         gps.vbox86 \
         local_gps \
