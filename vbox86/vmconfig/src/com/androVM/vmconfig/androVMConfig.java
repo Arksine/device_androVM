@@ -9,7 +9,6 @@ import android.os.PowerManager;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -31,9 +30,6 @@ public class androVMConfig extends Activity {
         Spinner sp_dpi = (Spinner) findViewById(R.id.sp_dpi);
         CheckBox cb_opengl_disable_render = (CheckBox) findViewById(R.id.cb_opengl_disable_render);
         TextView tv_opengl_disable_render = (TextView) findViewById(R.id.tv_opengl_disable_render);
-        CheckBox cb_opengl_force_IP = (CheckBox) findViewById(R.id.cb_opengl_force_IP);
-        TextView tv_opengl_force_IP = (TextView) findViewById(R.id.tv_opengl_force_IP);
-        EditText et_opengl_force_IP = (EditText) findViewById(R.id.et_opengl_force_IP);
         CheckBox cb_keyboard = (CheckBox) findViewById(R.id.cb_keyboard);
         Spinner sp_keyboard = (Spinner) findViewById(R.id.sp_keyboard);
         CheckBox cb_su_bypass = (CheckBox) findViewById(R.id.cb_su_bypass);
@@ -48,7 +44,6 @@ public class androVMConfig extends Activity {
         String cfg_res = TextConfig.getValue("vbox_graph_mode");
         String cfg_dpi = TextConfig.getValue("vbox_dpi");
         String cfg_opengl_disable_render = TextConfig.getValue("hardware_opengl_disable_render");
-        String cfg_opengl_force_IP = TextConfig.getValue("hardware_opengl_force_IP");
         String cfg_keyboard = TextConfig.getValue("vkeyboard_mode");
         String cfg_su_bypass = TextConfig.getValue("su_bypass");
 
@@ -70,9 +65,6 @@ public class androVMConfig extends Activity {
         else {
             cb_opengl_disable_render.setVisibility(android.view.View.INVISIBLE);
             tv_opengl_disable_render.setVisibility(android.view.View.INVISIBLE);
-            cb_opengl_force_IP.setVisibility(android.view.View.INVISIBLE);
-            tv_opengl_force_IP.setVisibility(android.view.View.INVISIBLE);
-            et_opengl_force_IP.setVisibility(android.view.View.INVISIBLE);
         }
         cb_res.setChecked(false);
 
@@ -102,13 +94,6 @@ public class androVMConfig extends Activity {
 
         if ((cfg_opengl_disable_render != null) && cfg_opengl_disable_render.equals("1")) {
             cb_opengl_disable_render.setChecked(true);
-        }
-
-        et_opengl_force_IP.setEnabled(false);
-        if ((cfg_opengl_force_IP != null) && (cfg_opengl_force_IP.length()>0)) {
-            cb_opengl_force_IP.setChecked(true);
-            et_opengl_force_IP.setEnabled(true);
-            et_opengl_force_IP.setText(cfg_opengl_force_IP);
         }
 
         cb_keyboard.setChecked(false);
@@ -144,9 +129,6 @@ public class androVMConfig extends Activity {
         Spinner sp_dpi = (Spinner) findViewById(R.id.sp_dpi);
         CheckBox cb_opengl_disable_render = (CheckBox) findViewById(R.id.cb_opengl_disable_render);
         TextView tv_opengl_disable_render = (TextView) findViewById(R.id.tv_opengl_disable_render);
-        CheckBox cb_opengl_force_IP = (CheckBox) findViewById(R.id.cb_opengl_force_IP);
-        TextView tv_opengl_force_IP = (TextView) findViewById(R.id.tv_opengl_force_IP);
-        EditText et_opengl_force_IP = (EditText) findViewById(R.id.et_opengl_force_IP);
 
         if (((CheckBox) v).isChecked()) {
             cb_res.setVisibility(android.view.View.INVISIBLE);
@@ -157,9 +139,6 @@ public class androVMConfig extends Activity {
             sp_dpi.setVisibility(android.view.View.INVISIBLE);
             cb_opengl_disable_render.setVisibility(android.view.View.VISIBLE);
             tv_opengl_disable_render.setVisibility(android.view.View.VISIBLE);
-            cb_opengl_force_IP.setVisibility(android.view.View.VISIBLE);
-            tv_opengl_force_IP.setVisibility(android.view.View.VISIBLE);
-            et_opengl_force_IP.setVisibility(android.view.View.VISIBLE);
         } else {
             cb_res.setVisibility(android.view.View.VISIBLE);
             tv_res.setVisibility(android.view.View.VISIBLE);
@@ -169,9 +148,6 @@ public class androVMConfig extends Activity {
             sp_dpi.setVisibility(android.view.View.VISIBLE);
             cb_opengl_disable_render.setVisibility(android.view.View.INVISIBLE);
             tv_opengl_disable_render.setVisibility(android.view.View.INVISIBLE);
-            cb_opengl_force_IP.setVisibility(android.view.View.INVISIBLE);
-            tv_opengl_force_IP.setVisibility(android.view.View.INVISIBLE);
-            et_opengl_force_IP.setVisibility(android.view.View.INVISIBLE);
         }
     }
 
@@ -195,15 +171,6 @@ public class androVMConfig extends Activity {
     }
 
     public void onCBClick_opengl_disable_render(View v) {
-    }
-
-    public void onCBClick_opengl_force_IP(View v) {
-        EditText et_opengl_force_IP = (EditText) findViewById(R.id.et_opengl_force_IP);
-        if (((CheckBox) v).isChecked()) {
-            et_opengl_force_IP.setEnabled(true);
-        } else {
-            et_opengl_force_IP.setEnabled(false);
-        }
     }
 
     public void onCBClick_keyboard(View v) {
@@ -255,16 +222,6 @@ public class androVMConfig extends Activity {
             TextConfig.setValue("hardware_opengl_disable_render", "1");
         else
             TextConfig.removeValue("hardware_opengl_disable_render");
-
-        // OpenGL Force IP
-        CheckBox cb_opengl_force_IP = (CheckBox) findViewById(R.id.cb_opengl_force_IP);
-
-        if (cb_opengl_force_IP.isChecked()) {
-            EditText et_opengl_force_IP = (EditText) findViewById(R.id.et_opengl_force_IP);
-            TextConfig.setValue("hardware_opengl_force_IP", et_opengl_force_IP.getText().toString());
-        }
-        else
-            TextConfig.removeValue("hardware_opengl_force_IP");
 
         // Keyboard
         CheckBox cb_keyboard = (CheckBox) findViewById(R.id.cb_keyboard);

@@ -107,30 +107,6 @@
         android:orientation="horizontal" >
 
         <CheckBox
-            android:id="@+id/cb_opengl_force_IP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onCBClick_opengl_force_IP" />
-
-        <TextView
-            android:id="@+id/tv_opengl_force_IP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/opengl_force_IP" />
-
-        <EditText
-            android:id="@+id/et_opengl_force_IP"
-            android:inputType="text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <CheckBox
             android:id="@+id/cb_keyboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
