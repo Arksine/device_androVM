@@ -40,7 +40,7 @@ int LibGenyd::setProperty(const char *property, const char *value)
     } else if (p_id == 0) {
         execl("/system/bin/androVM_setprop",
               "androVM_setprop", property, value, NULL);
-        return 0;
+        exit(1);
     } else {
         // Wait for child process
         wait(&status);
