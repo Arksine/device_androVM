@@ -1,6 +1,10 @@
 # system.prop for vbox86
 ro.kernel.qemu.gles=1
 dalvik.vm.heapsize=32m
+persist.service.adb.enable=1
+ro.secure=0
+ro.opengles.version=131072
+ro.genymotion.version=2.0.0
 
 #
 # Capabilities
