@@ -116,6 +116,8 @@ if [ -b $vbox_sdcard_drive ]; then
 else
   echo "NO SDCARD" > /dev/tty0
 fi
+#Try to create /mnt/sdcard/Download (for drag&drop)
+mkdir /mnt/sdcard/Download
 
 # ARM ABI
 abi2_set=`getprop ro.product.cpu.abi2`

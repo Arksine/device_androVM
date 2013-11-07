@@ -1,4 +1,15 @@
 # system.prop for vbox86
 ro.kernel.qemu.gles=1
 dalvik.vm.heapsize=32m
+
+#
+# Capabilities
+#
+
+ro.genyd.caps.bat=on
+ro.genyd.caps.gps=on
+ro.genyd.caps.acc=on
+#ro.genyd.caps.cam=on
+ro.genyd.caps.scr=on
+ro.genyd.caps.rmt=on
 # end system.prop for vbox86

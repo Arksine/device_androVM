@@ -1,6 +1,9 @@
 on init
    export HWACCEL 1
 
+on boot
+    start genyd
+
 service vbox86-setup /system/etc/init.androVM.sh
     oneshot
     class very-first
@@ -8,3 +11,25 @@ service vbox86-setup /system/etc/init.androVM.sh
 service local_opengl /system/bin/local_opengl
 
 service vinput /system/bin/vinput
+
+service genyd /system/bin/genyd
+    disabled
+    oneshot
+
+service dhcpcd_eth1 /system/bin/dhcpcd -ABKL
+    disabled
+    oneshot
+
+service iprenew_eth1 /system/bin/dhcpcd -n
+    disabled
+    oneshot
+
+service wpa_supplicant /system/bin/wpa_supplicant -ieth1 -Dwired -c/data/misc/wifi/wpa_supplicant.conf
+    socket wpa_eth1 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+#service back_camera /system/bin/local_camera -l24801 -p24800
+
+service local_gps /system/bin/local_gps
+

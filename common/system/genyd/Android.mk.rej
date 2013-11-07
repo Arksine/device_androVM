@@ -1,0 +1,10 @@
+--- common/system/genyd/Android.mk
++++ common/system/genyd/Android.mk
+@@ -39,6 +39,7 @@
+ 			   battery_handler.cpp			\
+ 			   capabilities_handler.cpp		\
+ 			   accelerometer_handler.cpp		\
++			   archive_flash_handler.cpp            \
+ 		           $(call all-proto-files-under, .)
+ 
+ LOCAL_MODULE		:= genyd
