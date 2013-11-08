@@ -2,7 +2,8 @@ $(call inherit-product,$(SRC_TARGET_DIR)/product/generic_x86.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/board/generic_x86/BoardConfig.mk)
 
-DEVICE_PACKAGE_OVERLAYS += device/androVM/vbox86p/overlay
+DEVICE_PACKAGE_OVERLAYS += device/androVM/vbox86p/overlay \
+			   device/androVM/vbox86/overlay
 
 PRODUCT_NAME := vbox86p
 PRODUCT_DEVICE := vbox86p
