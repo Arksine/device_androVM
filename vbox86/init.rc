@@ -102,6 +102,7 @@ on fs
     mount ext4 /dev/block/sda6 /system
     mount ext4 /dev/block/sda6 /system rw remount
     mount ext4 /dev/block/sdb3 /data
+    mount ext4 /dev/block/sdb1 /cache
 
 on post-fs
     # load vbox modules
