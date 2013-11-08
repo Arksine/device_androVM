@@ -18,8 +18,11 @@
 <resources>
     <string-array name="extra_wallpapers" translatable="false">
         <!--    Genymotion    -->
-        <item>genymotion_01</item>
-        <item>genymotion_02</item>
-        <item>genymotion_03</item>
+        <item>mosaique</item>
+        <item>grisrond</item>
+        <item>relief</item>
+        <item>blanc</item>
+        <item>clindoeil</item>
+        <item>movember</item>
     </string-array>
 </resources>
