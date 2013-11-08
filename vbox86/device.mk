@@ -65,6 +65,7 @@ PRODUCT_COPY_FILES := \
     device/androVM/common/gps.conf:system/etc/gps.conf \
     device/androVM/common/scripts/check-archive.sh:system/bin/check-archive.sh \
     device/androVM/common/scripts/flash-archive.sh:system/bin/flash-archive.sh \
+    device/androVM/vbox86/installed_su_daemon:/system/etc/.installed_su_daemon \
     #device/androVM/common/google/com.google.android.maps.jar:system/framework/com.google.android.maps.jar \
     #device/androVM/common/google/com.google.android.maps.xml:system/etc/permissions/com.google.android.maps.xml \
     #device/androVM/common/google/com.android.location.provider.jar:system/framework/com.android.location.provider.jar \
