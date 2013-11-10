@@ -47,20 +47,20 @@ int main(int argc, char *argv[]) {
             fd_ps2 = lfd;
             if (fd_ps2>fd_max)
                 fd_max = fd_ps2;
-            LOGE("found PS2 device");
+            ALOGE("found PS2 device");
             continue;
         }
         if (!strcmp(name, MOUSE_INTEGRATION_DEVICE_NAME)) {
             fd_seamless = lfd;
             if (fd_seamless>fd_max)
                 fd_max = fd_seamless;
-            LOGE("found seamless mouse device");
+            ALOGE("found seamless mouse device");
             continue;
         }
     }
 
     if ((fd_ps2<0) && (fd_seamless<0)) {
-        LOGE("no device found");
+        ALOGE("no device found");
         exit(-1);
     }
 
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
         struct uinput_user_dev uinp;
 
         if (!(uinp_fd_ps2 = open("/dev/uinput", O_WRONLY|O_NDELAY))) {
-            LOGE("Unable to open /dev/uinput for PS2!");
+            ALOGE("Unable to open /dev/uinput for PS2!");
             exit(-1);
         }
 
@@ -90,11 +90,11 @@ int main(int argc, char *argv[]) {
         ioctl(uinp_fd_ps2, UI_SET_RELBIT, REL_HWHEEL);
         ioctl(uinp_fd_ps2, UI_SET_RELBIT, REL_WHEEL);
         if (write(uinp_fd_ps2, &uinp, sizeof(uinp))!=sizeof(uinp)) {
-            LOGE("Error writing init data for uinput PS2");
+            ALOGE("Error writing init data for uinput PS2");
             exit(-1);
         }
         if (ioctl(uinp_fd_ps2, UI_DEV_CREATE)) {
-            LOGE("Unable to create PS2 uinput device...");
+            ALOGE("Unable to create PS2 uinput device...");
             exit(-1);
         }
     }
@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
         struct uinput_user_dev uinp;
 
         if (!(uinp_fd_seamless = open("/dev/uinput", O_WRONLY|O_NDELAY))) {
-            LOGE("Unable to open /dev/uinput for seamless!");
+            ALOGE("Unable to open /dev/uinput for seamless!");
             exit(-1);
         }
 
@@ -123,11 +123,11 @@ int main(int argc, char *argv[]) {
         ioctl(uinp_fd_seamless, UI_SET_ABSBIT, ABS_X);
         ioctl(uinp_fd_seamless, UI_SET_ABSBIT, ABS_Y);
         if (write(uinp_fd_seamless, &uinp, sizeof(uinp))!=sizeof(uinp)) {
-            LOGE("Error writing init data for uinput seamless");
+            ALOGE("Error writing init data for uinput seamless");
             exit(-1);
         }
         if (ioctl(uinp_fd_seamless, UI_DEV_CREATE)) {
-            LOGE("Unable to create seamless uinput device...");
+            ALOGE("Unable to create seamless uinput device...");
             exit(-1);
         }
     }
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
 
             if(FD_ISSET(fd_ps2, &rfds)) {
                 if (read(fd_ps2, &ev_read, sizeof(ev_read))!=sizeof(ev_read)) {
-                    LOGE("Error reading data from 'PS2' input device");
+                    ALOGE("Error reading data from 'PS2' input device");
                     exit(-1);
 	        }
                 if ((ev_read.type == EV_KEY) && (ev_read.code == BTN_LEFT) && (fd_last_move == fd_seamless)) {
@@ -167,7 +167,7 @@ int main(int argc, char *argv[]) {
 	    } 
             if(FD_ISSET(fd_seamless, &rfds)) {
                 if (read(fd_seamless, &ev_read, sizeof(ev_read))!=sizeof(ev_read)) {
-                    LOGE("Error reading data from 'Seamless' input device");
+                    ALOGE("Error reading data from 'Seamless' input device");
                     exit(-1);
 	        }
                 write(uinp_fd_seamless, &ev_read, sizeof(ev_read));
