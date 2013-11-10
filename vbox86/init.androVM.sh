@@ -136,5 +136,13 @@ genymotion_version=`getprop ro.genymotion.version`
 /system/bin/androVM-prop set android_version "$android_version"
 /system/bin/androVM-prop set genymotion_version "$genymotion_version"
 
+# Sound mixer
+alsa_amixer cset name='Master Playback Switch' on
+alsa_amixer cset name='Master Playback Volume' 20
+alsa_amixer cset name='PCM Playback Switch' on
+alsa_amixer cset name='PCM Playback Volume' 20
+alsa_amixer cset name='Capture Switch' on
+alsa_amixer cset name='Capture Volume' 20
+
 # Finalize init
 setprop androVM.inited 1
