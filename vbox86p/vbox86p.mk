@@ -7,7 +7,7 @@ DEVICE_PACKAGE_OVERLAYS += device/androVM/vbox86p/overlay \
 
 PRODUCT_NAME := vbox86p
 PRODUCT_DEVICE := vbox86p
-PRODUCT_MODEL := androVM for VirtualBox ('Phone' version)
+PRODUCT_MODEL := Genymotion ('Phone' version)
 
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=eth1
