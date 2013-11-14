@@ -27,7 +27,7 @@ $(call inherit-product, device/androVM/vbox86t/device.mk)
 
 PRODUCT_NAME := vbox86t
 PRODUCT_DEVICE := vbox86t
-PRODUCT_MODEL := androVM for VirtualBox ('Tablet' version)
+PRODUCT_MODEL := Genymotion ('Tablet' version)
 
 PRODUCT_COPY_FILES += \
     device/androVM/vbox86/vold.fstab:system/etc/vold.fstab \
