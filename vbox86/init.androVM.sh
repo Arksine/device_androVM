@@ -128,4 +128,7 @@ if [ -f /system/lib/libhoudini.so ]; then
   setprop dalvik.vm.houdini on
 fi
 
+# Set Wifi MAC address
+setprop wifi.interface.mac `cat /sys/class/net/eth1/address`
+
 setprop androVM.inited 1
