@@ -128,6 +128,9 @@ if [ -f /system/lib/libhoudini.so ]; then
   setprop dalvik.vm.houdini on
 fi
 
+# Set Wifi MAC address
+setprop wifi.interface.mac `cat /sys/class/net/eth1/address`
+
 # Update system versions
 android_version=`getprop ro.build.version.release`
 genymotion_version=`getprop ro.genymotion.version`
