@@ -144,5 +144,8 @@ alsa_amixer cset name='PCM Playback Volume' 20
 alsa_amixer cset name='Capture Switch' on
 alsa_amixer cset name='Capture Volume' 20
 
+# Set Wifi MAC address
+setprop wifi.interface.mac `cat /sys/class/net/eth1/address`
+
 # Finalize init
 setprop androVM.inited 1
