@@ -24,6 +24,9 @@ PRODUCT_PROPERTY_OVERRIDES := \
     ro.ril.gprsclass=10 \
     wifi.interface=eth1
 
+PRODUCT_AAPT_CONFIG := normal ldpi mdpi hdpi xhdpi xxhdpi
+#PRODUCT_AAPT_PREF_CONFIG := hdpi
+
 LOCAL_KERNEL := device/androVM/vbox86/kernel-vbox86
 
 PRODUCT_COPY_FILES := \
