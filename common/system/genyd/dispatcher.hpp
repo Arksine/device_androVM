@@ -39,6 +39,12 @@ private:
     // Answer "SetParam" requests
     void treatSetParam(const Request &request, Reply *reply);
 
+    // Answer "CheckArchive" requests
+    void treatCheckArchive(const Request &request, Reply *reply);
+
+    // Answer "SetParam" requests
+    void treatFlashArchive(const Request &request, Reply *reply);
+
     // Fallback for unknown requests
     void unknownRequest(const Request &request, Reply *reply);
 
@@ -125,6 +131,14 @@ private:
     void getAccelerometerValues(const Request &request, Reply *reply);
     void setAccelerometerValues(const Request &request, Reply *reply);
 
+
+    ///////////////////////////////
+    // Archive flash requests    //
+    // archive_flash_handler.cpp //
+    ///////////////////////////////
+
+    void checkArchive(const Request &request, Reply *reply);
+    void flashArchive(const Request &request, Reply *reply);
 };
 
 #endif

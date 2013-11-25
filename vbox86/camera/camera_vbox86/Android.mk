@@ -53,9 +53,6 @@ LOCAL_SRC_FILES := \
 	QemuClient.cpp \
 	GenyClient.cpp \
 	JpegCompressor.cpp \
-	EmulatedCamera2.cpp \
-	EmulatedFakeCamera2.cpp \
-
 
 
 LOCAL_MODULE := camera.vbox86

@@ -25,7 +25,6 @@
 #include <cutils/properties.h>
 #include "EmulatedGenyCamera.h"
 #include "EmulatedFakeCamera.h"
-#include "EmulatedFakeCamera2.h"
 #include "EmulatedCameraFactory.h"
 
 extern camera_module_t HAL_MODULE_INFO_SYM;
@@ -76,13 +75,9 @@ EmulatedCameraFactory::EmulatedCameraFactory()
         /* Create, and initialize the fake camera */
         switch (getBackCameraHalVersion()) {
             case 1:
-                mEmulatedCameras[camera_id] =
-                        new EmulatedFakeCamera(camera_id, true,
-                                &HAL_MODULE_INFO_SYM.common);
-                break;
             case 2:
                 mEmulatedCameras[camera_id] =
-                        new EmulatedFakeCamera2(camera_id, true,
+                        new EmulatedFakeCamera(camera_id, true,
                                 &HAL_MODULE_INFO_SYM.common);
                 break;
             default:
@@ -128,13 +123,9 @@ EmulatedCameraFactory::EmulatedCameraFactory()
         /* Create, and initialize the fake camera */
         switch (getFrontCameraHalVersion()) {
             case 1:
-                mEmulatedCameras[camera_id] =
-                        new EmulatedFakeCamera(camera_id, false,
-                                &HAL_MODULE_INFO_SYM.common);
-                break;
             case 2:
                 mEmulatedCameras[camera_id] =
-                        new EmulatedFakeCamera2(camera_id, false,
+                        new EmulatedFakeCamera(camera_id, false,
                                 &HAL_MODULE_INFO_SYM.common);
                 break;
             default:
