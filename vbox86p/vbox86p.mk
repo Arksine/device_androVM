@@ -32,6 +32,7 @@ PRODUCT_PACKAGES += libGLESv1_enc \
         local_gps \
         sensors.vbox86 \
         v86d \
+        vmconfig \
 #        camera.vbox86 \
 #        local_camera \
 

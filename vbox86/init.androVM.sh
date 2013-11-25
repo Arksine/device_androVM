@@ -84,7 +84,7 @@ fi
 insmod /system/lib/cfbcopyarea.ko
 insmod /system/lib/cfbfillrect.ko
 insmod /system/lib/cfbimgblt.ko
-insmod /system/lib/uvesafb.ko mode_option=$vbox_graph_mode scroll=redraw
+busybox insmod /system/lib/uvesafb.ko mode_option=$vbox_graph_mode scroll=redraw
 
 setprop ro.sf.lcd_density $vbox_dpi
 
