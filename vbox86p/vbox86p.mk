@@ -12,6 +12,7 @@ PRODUCT_MODEL := Genymotion ('Phone' version)
 PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=eth1
 
+PRODUCT_LOCALES += ldpi mdpi hdpi xhdpi
 
 PRODUCT_PACKAGES += $(THIRD_PARTY_APPS)
 PRODUCT_PACKAGES += libGLESv1_enc \
