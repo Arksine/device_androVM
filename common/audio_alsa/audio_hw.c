@@ -39,6 +39,8 @@
 
 #include <audio_utils/resampler.h>
 
+#define GENYMOTION_PCM_SERVER_PORT 24296
+
 //#include "audio_route.h"
 /* Mixer control names */
 #define MIXER_MASTER_PLAYBACK_VOLUME    "Master Playback Volume"
@@ -280,7 +282,7 @@ static int start_output_stream(struct stream_out *out)
     }
 
     static int already_tried = 0;
-pcm_config_out_tryagain: 
+pcm_config_out_tryagain:
     out->pcm = pcm_open(PCM_CARD, device, PCM_OUT | PCM_NORESTART, out->pcm_config);
 
     if (out->pcm && !pcm_is_ready(out->pcm)) {
@@ -682,7 +684,7 @@ static ssize_t out_write(struct audio_stream_out *stream, const void* buffer,
                                    (unsigned int *)&kernel_frames,
                                    &time_stamp) < 0) {
                 kernel_frames = -1;
-                break; 
+                break;
             }
             kernel_frames = pcm_get_buffer_size(out->pcm) - kernel_frames;
 
@@ -982,7 +984,7 @@ static void *start_pcm_server(void* arg)
         int ssocket;
         int csocket;
 
-        ssocket = socket_inaddr_any_server(24296, SOCK_STREAM);
+        ssocket = socket_inaddr_any_server(GENYMOTION_PCM_SERVER_PORT, SOCK_STREAM);
 
         if (ssocket < 0) {
             ALOGE("Unable to start listening pcm server");
@@ -1021,20 +1023,15 @@ static void *start_pcm_server(void* arg)
                 break;
             }
 
-            // Wen a client socket disconnect, select signal read activitie
+            // When a client socket disconnect, select signal read activity
             // on the corresponding socket, but read operation will return zero
             // bytes. This is the best way to detect disconnection
             if(read(csocket, &buf, 1) <= 0) {
                 ALOGI("pcm server lost connection");
                 break;
             }
-
-            ALOGI("pcm server receive message %s", buf);
         }
-        // close and wait for a new connection
-        // modification to out should be protected by mutex
-        // but it makes the audio driver hang for to long
-        // and android applications doesn't support it
+        // Close and wait for a new connection
         out->pcm_server_socket = 0;
         close(csocket);
         ALOGI("pcm server closed");
