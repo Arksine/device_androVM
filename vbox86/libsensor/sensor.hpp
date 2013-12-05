@@ -43,10 +43,6 @@ class Sensor {
 protected:
     // Get the current timestamp, in nanoseconds
     int64_t getTimestamp(void) const;
-
-    // Function to write property
-    static int setProperty(const char *property, const char *value);
-
 };
 
 #endif

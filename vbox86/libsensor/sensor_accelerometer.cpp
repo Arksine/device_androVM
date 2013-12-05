@@ -27,6 +27,8 @@ AccelerometerSensor::AccelerometerSensor(void)
     baseEvent.acceleration.z = 0.813417;
 
     memcpy(&lastEvent, &baseEvent, sizeof(lastEvent));
+
+    lastPropertiesWriteTimestamp = 0;
 }
 
 AccelerometerSensor::~AccelerometerSensor(void)
@@ -46,16 +48,22 @@ void AccelerometerSensor::generateEvent(sensors_event_t *data, t_sensor_data raw
     data->acceleration.y = rawData.y;
     data->acceleration.z = rawData.z;
 
-    char property[PROPERTY_VALUE_MAX];
-    // Save X acceleration
-    sprintf(property, "%lf", rawData.x);
-    Sensor::setProperty(ACCELEROMETER_X, property);
-    // Save Y acceleration
-    sprintf(property, "%lf", rawData.y);
-    Sensor::setProperty(ACCELEROMETER_Y, property);
-    // Save Z acceleration
-    sprintf(property, "%lf", rawData.z);
-    Sensor::setProperty(ACCELEROMETER_Z, property);
+
+    // We don't need to write properties every 20 ms, so skip
+    if ((data->timestamp - lastPropertiesWriteTimestamp) > ACCELERO_WRITE_MIN_PERIOD) {
+        char property[PROPERTY_VALUE_MAX];
+        // Save X acceleration
+        sprintf(property, "%lf", rawData.x);
+        property_set(ACCELEROMETER_X, property);
+        // Save Y acceleration
+        sprintf(property, "%lf", rawData.y);
+        property_set(ACCELEROMETER_Y, property);
+        // Save Z acceleration
+        sprintf(property, "%lf", rawData.z);
+        property_set(ACCELEROMETER_Z, property);
+        // save last write timestamp
+        lastPropertiesWriteTimestamp = data->timestamp;
+    }
 
     memcpy(&lastEvent, data, sizeof(lastEvent));
 }
