@@ -18,11 +18,12 @@
 <resources>
     <string-array name="extra_wallpapers" translatable="false">
         <!--    Genymotion    -->
+        <item>noel</item>
+        <item>movember</item>
         <item>mosaique</item>
         <item>grisrond</item>
         <item>relief</item>
         <item>blanc</item>
         <item>clindoeil</item>
-        <item>movember</item>
     </string-array>
 </resources>
