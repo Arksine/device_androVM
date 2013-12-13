@@ -2,7 +2,7 @@
 
 <resources>
 
-    <string name="config_networkLocationProvider">com.google.android.location</string>
-    <string name="config_geocodeProvider">com.google.android.location</string>
+    <string name="config_networkLocationProvider">com.google.android.location.NetworkLocationProvider</string>
+    <string name="config_geocodeProvider">com.google.android.location.GeocodeProvider</string>
 
 </resources>
