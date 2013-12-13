@@ -36,8 +36,10 @@ Socket::ReadStatus Socket::read(void)
     istream.write(buffer, len);
 
     // Try to parse the current stream
-    // On success, stream is consumed
     if (request.ParseFromIstream(&istream)) {
+        // On success, clear stream
+        istream.str("");
+        istream.clear();
         return Socket::NewMessage;
     } else {
         SLOGE("Can't parse request");
