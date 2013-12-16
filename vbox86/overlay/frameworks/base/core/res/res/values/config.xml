@@ -2,9 +2,6 @@
 
 <resources>
 
-    <string name="config_networkLocationProviderPackageName">com.google.android.location</string>
-    <string name="config_geocoderProviderPackageName">com.google.android.location</string>
-    <string name="config_geofenceProviderPackageName">com.google.android.location</string>
     <string-array name="config_locationProviderPackageNames" translatable="false">
         <!-- The standard AOSP fused location provider -->
         <item>com.android.location.fused</item>
