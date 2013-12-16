@@ -5,8 +5,8 @@
 
 #include "socket.hpp"
 
-Socket::Socket(int socket)
-    : socket(socket)
+Socket::Socket(int socket) :
+    socket(socket)
 {
 
 }
@@ -52,6 +52,11 @@ bool Socket::hasReplies(void) const
     return replies.size();
 }
 
+bool Socket::hasRequests(void) const
+{
+    return requests.size();
+}
+
 Socket::WriteStatus Socket::reply(void)
 {
     std::string data;
@@ -70,7 +75,31 @@ Socket::WriteStatus Socket::reply(void)
         delete reply;
         return Socket::WriteError;
     }
+
     delete reply;
+    return Socket::WriteSuccess;
+}
+
+Socket::WriteStatus Socket::ask(void)
+{
+    std::string data;
+    int len = 0;
+
+    Request *request = requests.front();
+    requests.pop();
+
+    if (!request->SerializeToString(&data)) {
+        SLOGE("Can't serialize request");
+        delete request;
+        return Socket::BadSerialize;
+    }
+    if ((len = send(socket, data.c_str(), data.size(), MSG_NOSIGNAL)) < 0) {
+        SLOGE("Can't send request");
+        delete request;
+        return Socket::WriteError;
+    }
+
+    delete request;
     return Socket::WriteSuccess;
 }
 
@@ -87,4 +116,10 @@ const Request &Socket::getRequest(void) const
 void Socket::addReply(Reply *reply)
 {
     replies.push(reply);
+}
+
+
+void Socket::addRequest(Request *request)
+{
+    requests.push(request);
 }
