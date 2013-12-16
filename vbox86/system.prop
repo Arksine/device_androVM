@@ -11,7 +11,7 @@ dalvik.vm.heapsize=256m
 persist.service.adb.enable=1
 ro.secure=0
 ro.opengles.version=131072
-ro.genymotion.version=1.3.0
+ro.genymotion.version=2.0.2
 ro.bq.gpu_to_cpu_unsupported=1
 
 #
