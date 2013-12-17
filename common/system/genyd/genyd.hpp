@@ -23,6 +23,7 @@ private:
   Socket *server;
   Dispatcher dispatcher;
   std::map<int, Socket *> clients;
+  Socket* clipboardProxy;
 
   // Initialize fd_set for select() monitoring
   int setFS(fd_set *readfs, fd_set *writefs) const;
@@ -32,6 +33,8 @@ private:
 
   // Handle Socket::read status for a given client
   void treatMessage(Socket *client);
+
+  void treatClipboard();
 
 public:
   // Start server

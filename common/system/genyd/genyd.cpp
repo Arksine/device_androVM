@@ -10,8 +10,9 @@
 
 #define SERVER_PORT 22666
 
-Genyd::Genyd(void)
-    : server(NULL)
+Genyd::Genyd(void):
+    server(NULL),
+    clipboardProxy(NULL)
 {
     int server_sock = -1;
     struct sockaddr_in server_addr;
@@ -93,12 +94,57 @@ void Genyd::acceptNewClient(void)
     }
 
     clients[client] = new Socket(client);
+
+    // Detect if the connection comes from clipboardProxy
+    char clientIp[INET_ADDRSTRLEN];
+
+    if(inet_ntop(PF_INET, &(clientAddr.sin_addr), clientIp, INET_ADDRSTRLEN) != NULL) {
+        SLOGE("New connection from %s", clientIp);
+        if(strcmp(clientIp, "127.0.0.1") == 0) {
+            SLOGE("clipboardProxy connection", clientIp);
+            clipboardProxy = clients[client];
+        }
+    }
 }
 
 void Genyd::treatMessage(Socket *client)
 {
     const Request &request = client->getRequest();
     client->addReply(dispatcher.dispatchRequest(request));
+}
+
+void Genyd::treatClipboard()
+{
+    if(clipboardProxy) {
+        char clipboardText[1024];
+
+        if(clipboardProxy->read(clipboardText, 1024) == Socket::NewMessage) {
+
+            SLOGE("Clipboard %s", clipboardText);
+            SLOGE("Clients %d", clients.size());
+
+            std::map<int, Socket*>::iterator begin = clients.begin();
+            std::map<int, Socket*>::iterator end = clients.end();
+
+            while (begin != end) {
+                if(begin->second != clipboardProxy) {
+                    SLOGE("New request %s", clipboardText);
+
+                    Request *request = new Request();
+                    request->set_type(Request::PushData);
+                    Parameter *parameter = request->mutable_parameter();
+                    parameter->set_type(Parameter::Clipboard);
+                    Value *value = parameter->mutable_value();
+                    value->set_type(Value::String);
+                    value->set_stringvalue(clipboardText);
+
+                    begin->second->addRequest(request);
+                    begin->second->ask();
+                }
+                ++begin;
+            }
+        }
+    }
 }
 
 void Genyd::run(void)
@@ -128,21 +174,27 @@ void Genyd::run(void)
         while (begin != end) {
             // Ready read
             if (FD_ISSET(begin->first, &readfs)) {
-                Socket::ReadStatus status = begin->second->read();
-                switch (status) {
-                case Socket::ReadError:
-                    SLOGD("Socket read error");
-                case Socket::NoMessage:
-                    delete begin->second;
-                    clients.erase(begin++);
+                if(begin->second == clipboardProxy) {
+                    treatClipboard();
                     continue;
-                    break;
-                case Socket::NewMessage:
-                case Socket::UnknownMessage:
-                    treatMessage(begin->second);
-                    break;
-                default:
-                    SLOGE("Unknown socket status");
+                }
+                else {
+                    Socket::ReadStatus status = begin->second->read();
+                    switch (status) {
+                    case Socket::ReadError:
+                        SLOGD("Socket read error");
+                    case Socket::NoMessage:
+                        delete begin->second;
+                        clients.erase(begin++);
+                        continue;
+                        break;
+                    case Socket::NewMessage:
+                    case Socket::UnknownMessage:
+                        treatMessage(begin->second);
+                        break;
+                    default:
+                        SLOGE("Unknown socket status");
+                    }
                 }
             }
 

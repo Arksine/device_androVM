@@ -54,6 +54,10 @@ public:
     // Read data from socket
     ReadStatus read(void);
 
+
+    // Read data from socket
+    ReadStatus read(char *buf, int size);
+
     // Return whether there're replies to send or not
     bool hasReplies(void) const;
 

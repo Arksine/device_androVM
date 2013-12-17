@@ -47,6 +47,27 @@ Socket::ReadStatus Socket::read(void)
     }
 }
 
+// Read data from socket
+Socket::ReadStatus Socket::read(char *buf, int size)
+{
+    int len = 0;
+    char *cmd = 0;
+
+    if ((len = ::read(socket, buf, size)) < 0) {
+        SLOGE("recv() error");
+        return Socket::ReadError;
+    }
+
+    if (len == 0) {
+        return Socket::NoMessage;
+    }
+
+    buf[len] = '\0';
+    SLOGE("recv %s - %d", buf, len);
+
+    return Socket::NewMessage;
+}
+
 bool Socket::hasReplies(void) const
 {
     return replies.size();
@@ -85,10 +106,12 @@ Socket::WriteStatus Socket::ask(void)
     std::string data;
     int len = 0;
 
+    SLOGE("Ask !!!!");
+
     Request *request = requests.front();
     requests.pop();
 
-    if (!request->SerializeToString(&data)) {
+    if (!request->SerializeToString(&data)) {Samuel
         SLOGE("Can't serialize request");
         delete request;
         return Socket::BadSerialize;
