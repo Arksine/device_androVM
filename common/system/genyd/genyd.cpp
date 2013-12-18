@@ -99,9 +99,9 @@ void Genyd::acceptNewClient(void)
     char clientIp[INET_ADDRSTRLEN];
 
     if(inet_ntop(PF_INET, &(clientAddr.sin_addr), clientIp, INET_ADDRSTRLEN) != NULL) {
-        SLOGE("New connection from %s", clientIp);
+        SLOGD("New connection from %s", clientIp);
         if(strcmp(clientIp, "127.0.0.1") == 0) {
-            SLOGE("clipboardProxy connection", clientIp);
+            SLOGD("clipboardProxy connection", clientIp);
             clipboardProxy = clients[client];
         }
     }
@@ -110,6 +110,21 @@ void Genyd::acceptNewClient(void)
 void Genyd::treatMessage(Socket *client)
 {
     const Request &request = client->getRequest();
+
+//    SLOGD("request.type() %d", request.type());
+//    SLOGD("request.parameter().type() %d", request.parameter().type());
+
+    if(request.type() == Request::SetParam &&
+            request.parameter().type() == Parameter::Clipboard) {
+
+        Parameter param = request.parameter();
+        if (param.has_value()) {
+            SLOGD("Get clip %s", param.value().stringvalue().c_str());
+            if(clipboardProxy) {
+                clipboardProxy->write(param.value().stringvalue().c_str(), param.value().stringvalue().size());
+            }
+        }
+    }
     client->addReply(dispatcher.dispatchRequest(request));
 }
 
@@ -120,16 +135,13 @@ void Genyd::treatClipboard()
 
         if(clipboardProxy->read(clipboardText, 1024) == Socket::NewMessage) {
 
-            SLOGE("Clipboard %s", clipboardText);
-            SLOGE("Clients %d", clients.size());
+            SLOGD("treatClipboard %s", clipboardText);
 
             std::map<int, Socket*>::iterator begin = clients.begin();
             std::map<int, Socket*>::iterator end = clients.end();
 
             while (begin != end) {
                 if(begin->second != clipboardProxy) {
-                    SLOGE("New request %s", clipboardText);
-
                     Request *request = new Request();
                     request->set_type(Request::PushData);
                     Parameter *parameter = request->mutable_parameter();

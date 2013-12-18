@@ -63,9 +63,25 @@ Socket::ReadStatus Socket::read(char *buf, int size)
     }
 
     buf[len] = '\0';
-    SLOGE("recv %s - %d", buf, len);
+    SLOGD("recv %s - %d", buf, len);
 
     return Socket::NewMessage;
+}
+
+// Write data to the socket
+Socket::WriteStatus Socket::write(const char *buf, int size)
+{
+    int len = 0;
+    char *cmd = 0;
+
+    if ((len = ::write(socket, buf, size)) < 0) {
+        SLOGE("write() error");
+        return Socket::WriteError;
+    }
+
+    SLOGD("write %s - %d", buf, len);
+
+    return Socket::WriteSuccess;
 }
 
 bool Socket::hasReplies(void) const
@@ -106,12 +122,10 @@ Socket::WriteStatus Socket::ask(void)
     std::string data;
     int len = 0;
 
-    SLOGE("Ask !!!!");
-
     Request *request = requests.front();
     requests.pop();
 
-    if (!request->SerializeToString(&data)) {Samuel
+    if (!request->SerializeToString(&data)) {
         SLOGE("Can't serialize request");
         delete request;
         return Socket::BadSerialize;

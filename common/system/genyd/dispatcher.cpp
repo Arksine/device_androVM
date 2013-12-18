@@ -31,7 +31,6 @@ Dispatcher::Dispatcher(void)
     setCallbacks[Parameter::GpsAccuracy] = &Dispatcher::setGpsAccuracy;
     setCallbacks[Parameter::GpsBearing] = &Dispatcher::setGpsBearing;
     setCallbacks[Parameter::Accelerometer] = &Dispatcher::setAccelerometerValues;
-    setCallbacks[Parameter::Clipboard] = &Dispatcher::setClipboardValue;
 }
 
 Dispatcher::~Dispatcher(void)

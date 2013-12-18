@@ -58,6 +58,9 @@ public:
     // Read data from socket
     ReadStatus read(char *buf, int size);
 
+    // Write data to the socket
+    WriteStatus write(const char *buf, int size);
+
     // Return whether there're replies to send or not
     bool hasReplies(void) const;
 

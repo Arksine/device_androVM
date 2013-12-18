@@ -42,11 +42,3 @@ void Dispatcher::getGenymotionVersion(const Request &request, Reply *reply)
     property_get(GENYMOTION_VERSION, property, "Unknown");
     value->set_stringvalue(property);
 }
-
-void Dispatcher::setClipboardValue(const Request &request, Reply *reply)
-{
-    (void)request;
-    (void)reply;
-
-    SLOGD("Received Set Clipboard");
-}
