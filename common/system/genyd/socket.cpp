@@ -74,7 +74,7 @@ Socket::WriteStatus Socket::write(const char *buf, int size)
     int len = 0;
     char *cmd = 0;
 
-    if ((len = ::write(socket, buf, size)) < 0) {
+    if ((len = send(socket, buf, size, MSG_NOSIGNAL)) < 0) {
         SLOGE("write() error");
         return Socket::WriteError;
     }

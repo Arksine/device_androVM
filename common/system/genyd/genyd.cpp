@@ -97,12 +97,14 @@ void Genyd::acceptNewClient(void)
 
     // Detect if the connection comes from clipboardProxy
     char clientIp[INET_ADDRSTRLEN];
-
     if(inet_ntop(PF_INET, &(clientAddr.sin_addr), clientIp, INET_ADDRSTRLEN) != NULL) {
         SLOGD("New connection from %s", clientIp);
         if(strcmp(clientIp, "127.0.0.1") == 0) {
             SLOGD("clipboardProxy connection", clientIp);
-            clipboardProxy = clients[client];
+             clipboardProxy = clients[client];
+             if(!clipboard.empty()) {
+                clipboardProxy->write(clipboard.c_str(), clipboard.size());
+            }
         }
     }
 }
@@ -110,32 +112,38 @@ void Genyd::acceptNewClient(void)
 void Genyd::treatMessage(Socket *client)
 {
     const Request &request = client->getRequest();
+    sendHostClipboardToAndroid(request);
+    client->addReply(dispatcher.dispatchRequest(request));
+}
 
-//    SLOGD("request.type() %d", request.type());
-//    SLOGD("request.parameter().type() %d", request.parameter().type());
-
+void Genyd::sendHostClipboardToAndroid(const Request &request)
+{
     if(request.type() == Request::SetParam &&
             request.parameter().type() == Parameter::Clipboard) {
 
         Parameter param = request.parameter();
         if (param.has_value()) {
-            SLOGD("Get clip %s", param.value().stringvalue().c_str());
+            SLOGD("sendHostClipboardToAndroid %s", param.value().stringvalue().c_str());
             if(clipboardProxy) {
                 clipboardProxy->write(param.value().stringvalue().c_str(), param.value().stringvalue().size());
+                SLOGD("sendHostClipboardToAndroid write");
+            }
+            else {
+                clipboard = param.value().stringvalue();
+                SLOGD("sendHostClipboardToAndroid save");
             }
         }
     }
-    client->addReply(dispatcher.dispatchRequest(request));
 }
 
-void Genyd::treatClipboard()
+void Genyd::sendAndroidClipboardToHost()
 {
     if(clipboardProxy) {
         char clipboardText[1024];
 
         if(clipboardProxy->read(clipboardText, 1024) == Socket::NewMessage) {
 
-            SLOGD("treatClipboard %s", clipboardText);
+            SLOGD("sendAndroidClipboardToHost %s", clipboardText);
 
             std::map<int, Socket*>::iterator begin = clients.begin();
             std::map<int, Socket*>::iterator end = clients.end();
@@ -187,7 +195,7 @@ void Genyd::run(void)
             // Ready read
             if (FD_ISSET(begin->first, &readfs)) {
                 if(begin->second == clipboardProxy) {
-                    treatClipboard();
+                    sendAndroidClipboardToHost();
                     continue;
                 }
                 else {

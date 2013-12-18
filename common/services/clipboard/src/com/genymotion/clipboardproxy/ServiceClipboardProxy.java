@@ -133,7 +133,7 @@ public class ServiceClipboardProxy extends Service implements
 			while (true) {
 				try {
 					int len = socket.getInputStream().read(buffer);
-					if(len != 0) {
+					if(len > 0) {
 						clipboardText = new String(buffer, 0, len);				
 						Log.d("Genyd", "ReadThread " + clipboardText);
 						mainHandler.post(new Runnable() {
