@@ -58,7 +58,7 @@ public class ServiceClipboardProxy extends Service implements
 		super.onDestroy();
 
 		try {
-			if (socket != null) {
+			if (socket != null && socket.isConnected()) {
 				socket.close();
 			}
 		} catch (IOException e) {
@@ -79,7 +79,7 @@ public class ServiceClipboardProxy extends Service implements
 			if (label == null
 					|| (label != null && !label.toString().equals(myLabel))) {
 
-				Log.d("Genyd","ServiceClipboardProxy onPrimaryClipChanged");
+				Log.d("Genyd", "ServiceClipboardProxy onPrimaryClipChanged");
 
 				ClipData.Item item = data.getItemAt(0);
 				clipboardText = item.coerceToText(this).toString();
@@ -89,36 +89,47 @@ public class ServiceClipboardProxy extends Service implements
 
 	}
 
-	class ConnectionThread implements Runnable {
-		@Override
-		public void run() {
+	protected synchronized boolean connect() {
+		if (socket == null || !socket.isConnected()) {
 			try {
 				InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 				socket = new Socket(serverAddr, SERVERPORT);
 				socket.setTcpNoDelay(true);
-				new Thread(new ReadThread()).start();
+				socket.setKeepAlive(true);
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 
+		if (socket == null) {
+			return false;
+		}
+
+		return socket.isConnected();
+	}
+
+	class ConnectionThread implements Runnable {
+		@Override
+		public void run() {
+			if (connect()) {
+				new Thread(new ReadThread()).start();
+			}
+		}
 	}
 
 	class WriteThread implements Runnable {
 		@Override
 		public void run() {
-			try {
-				socket.getOutputStream().write(clipboardText.getBytes());
-				socket.getOutputStream().flush();
-				Log.d("Genyd", "WriteThread " + clipboardText);
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (Exception e) {
-				e.printStackTrace();
+			if (connect()) {
+				try {
+					socket.getOutputStream().write(clipboardText.getBytes());
+					socket.getOutputStream().flush();
+					Log.d("Genyd", "WriteThread " + clipboardText);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -131,24 +142,25 @@ public class ServiceClipboardProxy extends Service implements
 			Handler mainHandler = new Handler(getMainLooper());
 
 			while (true) {
-				try {
-					int len = socket.getInputStream().read(buffer);
-					if(len > 0) {
-						clipboardText = new String(buffer, 0, len);				
-						Log.d("Genyd", "ReadThread " + clipboardText);
-						mainHandler.post(new Runnable() {
-							@Override
-							public void run() {
-								clipboardManager.setPrimaryClip(ClipData
-										.newPlainText(myLabel, clipboardText));
-							}
-						});
-					}
+				if (connect()) {
+					try {
+						int len = socket.getInputStream().read(buffer);
+						if (len > 0) {
+							clipboardText = new String(buffer, 0, len);
+							Log.d("Genyd", "ReadThread " + clipboardText);
+							mainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									clipboardManager.setPrimaryClip(ClipData
+											.newPlainText(myLabel,
+													clipboardText));
+								}
+							});
+						}
 
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (Exception e) {
-					e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}
