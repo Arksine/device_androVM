@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Clipboard Proxy</string>
+    <string name="start_service">Start Clipboard Proxy</string>
+	<string name="stop_service">Stop Clipboard Proxy</string>
+	<string name="clip_description_label">ClipDescriptionLabel</string>
+	<string name="clipboard_proxy_stopped">Clipboard Proxy stopped</string>
+    
+</resources>

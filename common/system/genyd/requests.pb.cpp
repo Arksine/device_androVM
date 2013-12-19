@@ -191,25 +191,25 @@ void protobuf_AddDesc_device_2fandroVM_2fcommon_2fsystem_2fgenyd_2frequests_2epr
     "\n\nfloatValue\030\004 \001(\002\022\023\n\013stringValue\030\005 \001(\t\022"
     "\022\n\nbytesValue\030\006 \001(\014\";\n\004Type\022\010\n\004Bool\020\001\022\007\n"
     "\003Int\020\002\022\t\n\005Float\020\003\022\n\n\006String\020\004\022\t\n\005Bytes\020\005"
-    "\"\363\002\n\tParameter\022(\n\004type\030\001 \002(\0162\032.Genymotio"
+    "\"\202\003\n\tParameter\022(\n\004type\030\001 \002(\0162\032.Genymotio"
     "n.Parameter.Type\022 \n\005value\030\002 \001(\0132\021.Genymo"
-    "tion.Value\"\231\002\n\004Type\022\010\n\004None\020\000\022\022\n\016Android"
+    "tion.Value\"\250\002\n\004Type\022\010\n\004None\020\000\022\022\n\016Android"
     "Version\020\001\022\017\n\013BuildNumber\020\002\022\017\n\013BatteryMod"
     "e\020\003\022\020\n\014BatteryLevel\020\004\022\021\n\rBatteryStatus\020\005"
     "\022\r\n\tGpsStatus\020\006\022\017\n\013GpsLatitude\020\007\022\020\n\014GpsL"
     "ongitude\020\010\022\017\n\013GpsAltitude\020\t\022\017\n\013GpsAccura"
     "cy\020\n\022\016\n\nGpsBearing\020\013\022\021\n\rAccelerometer\020\014\022"
     "\025\n\021GenymotionVersion\020\r\022\020\n\014Capabilities\020\016"
-    "\022\014\n\010FileName\020\017\"\267\001\n\007Request\022&\n\004type\030\001 \002(\016"
-    "2\030.Genymotion.Request.Type\022(\n\tparameter\030"
-    "\002 \001(\0132\025.Genymotion.Parameter\"Z\n\004Type\022\010\n\004"
-    "None\020\000\022\010\n\004Ping\020\001\022\014\n\010GetParam\020\002\022\014\n\010SetPar"
-    "am\020\003\022\020\n\014CheckArchive\020\004\022\020\n\014FlashArchive\020\005"
-    "\"\245\001\n\005Reply\022$\n\004type\030\001 \002(\0162\026.Genymotion.Re"
-    "ply.Type\022\"\n\006status\030\002 \002(\0132\022.Genymotion.St"
-    "atus\022 \n\005value\030\003 \001(\0132\021.Genymotion.Value\"0"
-    "\n\004Type\022\010\n\004None\020\000\022\t\n\005Error\020\001\022\010\n\004Pong\020\002\022\t\n"
-    "\005Value\020\003", 1168);
+    "\022\014\n\010FileName\020\017\022\r\n\tClipboard\020\020\"\305\001\n\007Reques"
+    "t\022&\n\004type\030\001 \002(\0162\030.Genymotion.Request.Typ"
+    "e\022(\n\tparameter\030\002 \001(\0132\025.Genymotion.Parame"
+    "ter\"h\n\004Type\022\010\n\004None\020\000\022\010\n\004Ping\020\001\022\014\n\010GetPa"
+    "ram\020\002\022\014\n\010SetParam\020\003\022\020\n\014CheckArchive\020\004\022\020\n"
+    "\014FlashArchive\020\005\022\014\n\010PushData\020\006\"\245\001\n\005Reply\022"
+    "$\n\004type\030\001 \002(\0162\026.Genymotion.Reply.Type\022\"\n"
+    "\006status\030\002 \002(\0132\022.Genymotion.Status\022 \n\005val"
+    "ue\030\003 \001(\0132\021.Genymotion.Value\"0\n\004Type\022\010\n\004N"
+    "one\020\000\022\t\n\005Error\020\001\022\010\n\004Pong\020\002\022\t\n\005Value\020\003", 1197);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "device/androVM/common/system/genyd/requests.proto", &protobuf_RegisterTypes);
   Status::default_instance_ = new Status();
@@ -1020,6 +1020,7 @@ bool Parameter_Type_IsValid(int value) {
     case 13:
     case 14:
     case 15:
+    case 16:
       return true;
     default:
       return false;
@@ -1043,6 +1044,7 @@ const Parameter_Type Parameter::Accelerometer;
 const Parameter_Type Parameter::GenymotionVersion;
 const Parameter_Type Parameter::Capabilities;
 const Parameter_Type Parameter::FileName;
+const Parameter_Type Parameter::Clipboard;
 const Parameter_Type Parameter::Type_MIN;
 const Parameter_Type Parameter::Type_MAX;
 const int Parameter::Type_ARRAYSIZE;
@@ -1321,6 +1323,7 @@ bool Request_Type_IsValid(int value) {
     case 3:
     case 4:
     case 5:
+    case 6:
       return true;
     default:
       return false;
@@ -1334,6 +1337,7 @@ const Request_Type Request::GetParam;
 const Request_Type Request::SetParam;
 const Request_Type Request::CheckArchive;
 const Request_Type Request::FlashArchive;
+const Request_Type Request::PushData;
 const Request_Type Request::Type_MIN;
 const Request_Type Request::Type_MAX;
 const int Request::Type_ARRAYSIZE;
