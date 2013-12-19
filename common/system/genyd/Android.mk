@@ -37,10 +37,11 @@ LOCAL_SRC_FILES		:= main.cpp				\
 			   dispatcher.cpp			\
 			   gps_handler.cpp                      \
 			   battery_handler.cpp			\
+			   generic_handler.cpp			\
 			   capabilities_handler.cpp		\
 			   accelerometer_handler.cpp		\
-                           archive_flash_handler.cpp            \
-		           requests.pb.cpp
+			   archive_flash_handler.cpp            \
+                           requests.pb.cpp
 
 LOCAL_MODULE		:= genyd
 

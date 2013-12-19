@@ -98,11 +98,12 @@ enum Parameter_Type {
   Parameter_Type_Accelerometer = 12,
   Parameter_Type_GenymotionVersion = 13,
   Parameter_Type_Capabilities = 14,
-  Parameter_Type_FileName = 15
+  Parameter_Type_FileName = 15,
+  Parameter_Type_Clipboard = 16
 };
 bool Parameter_Type_IsValid(int value);
 const Parameter_Type Parameter_Type_Type_MIN = Parameter_Type_None;
-const Parameter_Type Parameter_Type_Type_MAX = Parameter_Type_FileName;
+const Parameter_Type Parameter_Type_Type_MAX = Parameter_Type_Clipboard;
 const int Parameter_Type_Type_ARRAYSIZE = Parameter_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Parameter_Type_descriptor();
@@ -121,11 +122,12 @@ enum Request_Type {
   Request_Type_GetParam = 2,
   Request_Type_SetParam = 3,
   Request_Type_CheckArchive = 4,
-  Request_Type_FlashArchive = 5
+  Request_Type_FlashArchive = 5,
+  Request_Type_PushData = 6
 };
 bool Request_Type_IsValid(int value);
 const Request_Type Request_Type_Type_MIN = Request_Type_None;
-const Request_Type Request_Type_Type_MAX = Request_Type_FlashArchive;
+const Request_Type Request_Type_Type_MAX = Request_Type_PushData;
 const int Request_Type_Type_ARRAYSIZE = Request_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Request_Type_descriptor();
@@ -522,6 +524,7 @@ class Parameter : public ::google::protobuf::Message {
   static const Type GenymotionVersion = Parameter_Type_GenymotionVersion;
   static const Type Capabilities = Parameter_Type_Capabilities;
   static const Type FileName = Parameter_Type_FileName;
+  static const Type Clipboard = Parameter_Type_Clipboard;
   static inline bool Type_IsValid(int value) {
     return Parameter_Type_IsValid(value);
   }
@@ -647,6 +650,7 @@ class Request : public ::google::protobuf::Message {
   static const Type SetParam = Request_Type_SetParam;
   static const Type CheckArchive = Request_Type_CheckArchive;
   static const Type FlashArchive = Request_Type_FlashArchive;
+  static const Type PushData = Request_Type_PushData;
   static inline bool Type_IsValid(int value) {
     return Request_Type_IsValid(value);
   }
