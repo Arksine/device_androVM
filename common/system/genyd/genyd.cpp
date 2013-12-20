@@ -69,7 +69,7 @@ int Genyd::setFS(fd_set *readfs, fd_set *writefs) const
 
     while (begin != end) {
         FD_SET(begin->first, readfs);
-        if (begin->second->hasReplies() || begin->second->hasRequests()) {
+        if (begin->second->hasReplies()) {
             FD_SET(begin->first, writefs);
         }
         highest = std::max(highest, begin->first);
@@ -148,17 +148,7 @@ void Genyd::run(void)
 
             // Ready write
             if (FD_ISSET(begin->first, &writefs)) {
-                Socket::WriteStatus status = Socket::WriteSuccess;
-
-                // Higher priority for replies
-                if (begin->second->hasReplies()) {
-                    status = begin->second->reply();
-                } else if (begin->second->hasRequests()) {
-                    status = begin->second->ask();
-                } else {
-                    // Nothing
-                }
-
+                Socket::WriteStatus status = begin->second->reply();
                 if (status == Socket::WriteError) {
                     SLOGD("Socket write error with client %d", begin->first);
                     delete begin->second;

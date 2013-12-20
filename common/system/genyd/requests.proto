@@ -50,10 +50,9 @@ message Parameter {
     GenymotionVersion  = 13; // string
     Capabilities       = 14; // JSON string
     FileName           = 15; // string
-    Clipboard          = 16; // string
   }
 
-  required Type  type  = 1;
+  required Type  type = 1;
   optional Value value = 2;
 }
 
@@ -65,7 +64,6 @@ message Request {
     SetParam        = 3;
     CheckArchive    = 4;
     FlashArchive    = 5;
-    PushData        = 6;
   }
 
   required  Type       type        = 1;
