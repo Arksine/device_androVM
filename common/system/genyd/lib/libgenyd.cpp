@@ -28,9 +28,27 @@ LibGenyd& LibGenyd::getInstance(void)
 }
 
 // Set property with external binary androVM_setprop to avoid RO problem
-void LibGenyd::setProperty(const char *property, const char *value)
+int LibGenyd::setProperty(const char *property, const char *value)
 {
-    property_set(property, value);
+    int status = 1;
+
+    // Store value
+    pid_t p_id = fork();
+    if (p_id < 0) {
+        SLOGE("Unable to fork.");
+        return 1;
+    } else if (p_id == 0) {
+        execl("/system/bin/androVM_setprop",
+              "androVM_setprop", property, value, NULL);
+        exit(1);
+    } else {
+        // Wait for child process
+        wait(&status);
+        if (WEXITSTATUS(status) != 0) {
+            SLOGD("Setprop process exited  with status %d", WEXITSTATUS(status));
+        }
+    }
+    return status;
 }
 
 // Store current value to Genymotion cache
@@ -39,9 +57,8 @@ void LibGenyd::cacheCurrentValue(const char *key,
 {
     char full_key[PROPERTY_KEY_MAX];
     // Don't cache empty value to use default one instead
-    if (!buff || strlen(buff) <= 0) {
+    if (!buff || strlen(buff) <= 0)
         return;
-    }
 
     // Generate new key
     snprintf(full_key, sizeof(full_key), "%s%s", key, CACHE_SUFFIX);

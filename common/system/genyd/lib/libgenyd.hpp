@@ -27,7 +27,7 @@ private:
     LibGenyd(const LibGenyd &);
 
     // Copy operator
-    LibGenyd &operator=(const LibGenyd &);
+    LibGenyd operator=(const LibGenyd &);
 
     // Singleton instance
     static LibGenyd instance;
@@ -60,7 +60,7 @@ private:
     t_dispatcher_member getSensorCallback(const char *path);
 
     // Function to write property
-    static void setProperty(const char *property, const char *value);
+    static int setProperty(const char *property, const char *value);
 
     // Store current value to Genymotion cache
     void cacheCurrentValue(const char *path, const char *buf);
@@ -86,7 +86,6 @@ private:
 
     // Get AC Online status "0" = offline, "1"
     int acOnlineStatus(char *buff, size_t size);
-
 };
 
 #endif // #define LIB_GENYD_HPP_

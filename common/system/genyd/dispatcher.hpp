@@ -52,7 +52,6 @@ private:
 
     /////////////////////////
     // Generic requests    //
-    // generic_handler.cpp //
     /////////////////////////
 
     // Answer "GetParam AndroidVersion" request
@@ -64,8 +63,6 @@ private:
     // Answer "GetParam GenymotionVersion" request
     void getGenymotionVersion(const Request &request, Reply *reply);
 
-    // Answer "SetParam Clipboard" request
-    void setClipboardValue(const Request &request, Reply *reply);
 
     /////////////////////////
     // Battery requests    //
