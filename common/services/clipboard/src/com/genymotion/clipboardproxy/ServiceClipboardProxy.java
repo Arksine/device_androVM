@@ -8,10 +8,8 @@ import java.net.UnknownHostException;
 import android.app.Service;
 import android.content.ClipData;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 import android.content.ClipboardManager;
 
 public class ServiceClipboardProxy extends Service implements
@@ -65,8 +63,7 @@ public class ServiceClipboardProxy extends Service implements
 			e.printStackTrace();
 		}
 
-		Toast.makeText(this, R.string.clipboard_proxy_stopped,
-				Toast.LENGTH_SHORT).show();
+		Log.d("Genyd", "ClipboardProxy destroy");
 	}
 
 	@Override
@@ -91,21 +88,24 @@ public class ServiceClipboardProxy extends Service implements
 
 	protected synchronized boolean connect() {
 		if (socket == null || !socket.isConnected()) {
+			Log.d("Genyd", "connect ");
 			try {
 				InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 				socket = new Socket(serverAddr, SERVERPORT);
 				socket.setTcpNoDelay(true);
 				socket.setKeepAlive(true);
 			} catch (UnknownHostException e) {
-				e.printStackTrace();
+				Log.d("Genyd", "connect UnknownHostException " + e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.d("Genyd", "connect IOException " + e.getMessage());
 			}
 		}
 
 		if (socket == null) {
 			return false;
 		}
+
+		Log.d("Genyd", "connected " + socket.isConnected());
 
 		return socket.isConnected();
 	}
@@ -128,7 +128,7 @@ public class ServiceClipboardProxy extends Service implements
 					socket.getOutputStream().flush();
 					Log.d("Genyd", "WriteThread " + clipboardText);
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.d("Genyd", "write IOException " + e.getMessage());
 				}
 			}
 		}
@@ -139,7 +139,6 @@ public class ServiceClipboardProxy extends Service implements
 		@Override
 		public void run() {
 			byte[] buffer = new byte[1024];
-			Handler mainHandler = new Handler(getMainLooper());
 
 			while (true) {
 				if (connect()) {
@@ -148,14 +147,8 @@ public class ServiceClipboardProxy extends Service implements
 						if (len > 0) {
 							clipboardText = new String(buffer, 0, len);
 							Log.d("Genyd", "ReadThread " + clipboardText);
-							mainHandler.post(new Runnable() {
-								@Override
-								public void run() {
-									clipboardManager.setPrimaryClip(ClipData
-											.newPlainText(myLabel,
-													clipboardText));
-								}
-							});
+							clipboardManager.setPrimaryClip(ClipData
+									.newPlainText(myLabel, clipboardText));
 						}
 
 					} catch (IOException e) {

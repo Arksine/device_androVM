@@ -10,6 +10,11 @@
 
 #define SERVER_PORT 22666
 
+// Not defined for Android 2.3
+#ifndef INET_ADDRSTRLEN
+#define INET_ADDRSTRLEN 16
+#endif
+
 Genyd::Genyd(void):
     server(NULL),
     clipboardProxy(NULL)
@@ -101,8 +106,10 @@ void Genyd::acceptNewClient(void)
         SLOGD("New connection from %s", clientIp);
         if(strcmp(clientIp, "127.0.0.1") == 0) {
             SLOGD("clipboardProxy connection", clientIp);
-             clipboardProxy = clients[client];
-             if(!clipboard.empty()) {
+            clipboardProxy = clients[client];
+            if(!clipboard.empty()) {
+                // If the clipboard was set before clipboardProxy connect,
+                // send it the value we saved before
                 clipboardProxy->write(clipboard.c_str(), clipboard.size());
             }
         }
@@ -123,14 +130,14 @@ void Genyd::sendHostClipboardToAndroid(const Request &request)
 
         Parameter param = request.parameter();
         if (param.has_value()) {
-            SLOGD("sendHostClipboardToAndroid %s", param.value().stringvalue().c_str());
+            // If clipboardProxy already connected, send the new clipboard
             if(clipboardProxy) {
                 clipboardProxy->write(param.value().stringvalue().c_str(), param.value().stringvalue().size());
-                SLOGD("sendHostClipboardToAndroid write");
+                SLOGD("sendHostClipboardToAndroid %s", param.value().stringvalue().c_str());
             }
             else {
+                // Else, keep clipboard value, it will be send when clipboardProxy will connect
                 clipboard = param.value().stringvalue();
-                SLOGD("sendHostClipboardToAndroid save");
             }
         }
     }
@@ -141,13 +148,23 @@ void Genyd::sendAndroidClipboardToHost()
     if(clipboardProxy) {
         char clipboardText[1024];
 
-        if(clipboardProxy->read(clipboardText, 1024) == Socket::NewMessage) {
+        Socket::ReadStatus status = clipboardProxy->read(clipboardText, 1024);
 
+        switch (status) {
+        case Socket::ReadError:
+            SLOGD("clipboardProxy read error");
+        case Socket::NoMessage:
+            SLOGD("clipboardProxy deconnection");
+            clients.erase(clipboardProxy->getFD());
+            delete clipboardProxy;
+            clipboardProxy = NULL;
+            break;
+        case Socket::NewMessage:
             SLOGD("sendAndroidClipboardToHost %s", clipboardText);
-
+            // Broadcast message to all clients
+        {
             std::map<int, Socket*>::iterator begin = clients.begin();
             std::map<int, Socket*>::iterator end = clients.end();
-
             while (begin != end) {
                 if(begin->second != clipboardProxy) {
                     Request *request = new Request();
@@ -163,6 +180,11 @@ void Genyd::sendAndroidClipboardToHost()
                 }
                 ++begin;
             }
+        }
+            break;
+        case Socket::UnknownMessage:
+        default:
+            SLOGE("Unknown clipboardProxy status");
         }
     }
 }
@@ -196,6 +218,7 @@ void Genyd::run(void)
             if (FD_ISSET(begin->first, &readfs)) {
                 if(begin->second == clipboardProxy) {
                     sendAndroidClipboardToHost();
+                     ++begin;
                     continue;
                 }
                 else {
@@ -206,6 +229,7 @@ void Genyd::run(void)
                     case Socket::NoMessage:
                         delete begin->second;
                         clients.erase(begin++);
+                        SLOGD("Socket deconnection");
                         continue;
                         break;
                     case Socket::NewMessage:
