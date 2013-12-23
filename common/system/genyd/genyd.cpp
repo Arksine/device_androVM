@@ -9,6 +9,7 @@
 #include "genyd.hpp"
 
 #define SERVER_PORT 22666
+#define CLIPBOARD_SIZE 1024
 
 // Not defined for Android 2.3
 #ifndef INET_ADDRSTRLEN
@@ -103,9 +104,7 @@ void Genyd::acceptNewClient(void)
     // Detect if the connection comes from clipboardProxy
     char clientIp[INET_ADDRSTRLEN];
     if(inet_ntop(PF_INET, &(clientAddr.sin_addr), clientIp, INET_ADDRSTRLEN) != NULL) {
-        SLOGD("New connection from %s", clientIp);
         if(strcmp(clientIp, "127.0.0.1") == 0) {
-            SLOGD("clipboardProxy connection", clientIp);
             clipboardProxy = clients[client];
             if(!clipboard.empty()) {
                 // If the clipboard was set before clipboardProxy connect,
@@ -133,7 +132,6 @@ void Genyd::sendHostClipboardToAndroid(const Request &request)
             // If clipboardProxy already connected, send the new clipboard
             if(clipboardProxy) {
                 clipboardProxy->write(param.value().stringvalue().c_str(), param.value().stringvalue().size());
-                SLOGD("sendHostClipboardToAndroid %s", param.value().stringvalue().c_str());
             }
             else {
                 // Else, keep clipboard value, it will be send when clipboardProxy will connect
@@ -146,21 +144,19 @@ void Genyd::sendHostClipboardToAndroid(const Request &request)
 void Genyd::sendAndroidClipboardToHost()
 {
     if(clipboardProxy) {
-        char clipboardText[1024];
+        char clipboardText[CLIPBOARD_SIZE];
 
-        Socket::ReadStatus status = clipboardProxy->read(clipboardText, 1024);
+        Socket::ReadStatus status = clipboardProxy->read(clipboardText, CLIPBOARD_SIZE);
 
         switch (status) {
         case Socket::ReadError:
-            SLOGD("clipboardProxy read error");
+            SLOGE("clipboardProxy read error");
         case Socket::NoMessage:
-            SLOGD("clipboardProxy deconnection");
             clients.erase(clipboardProxy->getFD());
             delete clipboardProxy;
             clipboardProxy = NULL;
             break;
         case Socket::NewMessage:
-            SLOGD("sendAndroidClipboardToHost %s", clipboardText);
             // Broadcast message to all clients
         {
             std::map<int, Socket*>::iterator begin = clients.begin();
@@ -218,12 +214,14 @@ void Genyd::run(void)
             if (FD_ISSET(begin->first, &readfs)) {
                 if(begin->second == clipboardProxy) {
                     sendAndroidClipboardToHost();
+                     ++begin;
+                    continue;
                 }
                 else {
                     Socket::ReadStatus status = begin->second->read();
                     switch (status) {
                     case Socket::ReadError:
-                        SLOGD("Socket read error");
+                        SLOGE("Socket read error");
                     case Socket::NoMessage:
                         delete begin->second;
                         clients.erase(begin++);
