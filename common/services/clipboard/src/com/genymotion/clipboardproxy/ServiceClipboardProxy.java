@@ -5,16 +5,13 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 import android.text.ClipboardManager;
 
 public class ServiceClipboardProxy extends Service {
@@ -55,7 +52,7 @@ public class ServiceClipboardProxy extends Service {
 		new Thread(new ConnectionThread()).start();
 
 		// Tells the system that, should the service be terminated for memory
-		// or performance reasons, I’d like to have it started back up.
+		// or performance reasons, I d like to have it started back up.
 		return Service.START_STICKY;
 	}
 
@@ -73,8 +70,7 @@ public class ServiceClipboardProxy extends Service {
 			e.printStackTrace();
 		}
 
-		Toast.makeText(this, R.string.clipboard_proxy_stopped,
-				Toast.LENGTH_SHORT).show();
+		Log.d("Genyd", "ClipboardProxy destroy");
 	}
 
 	class myBroadcastReceiver extends BroadcastReceiver {
@@ -85,8 +81,10 @@ public class ServiceClipboardProxy extends Service {
 				synchronized (stopRecursion) {
 					if (!stopRecursion) {
 						if (clipboardManager.hasText()) {
-							Log.d("Genyd", "ServiceClipboardProxy onPrimaryClipChanged");
-							clipboardText = clipboardManager.getText().toString();
+							Log.d("Genyd",
+									"ServiceClipboardProxy onPrimaryClipChanged");
+							clipboardText = clipboardManager.getText()
+									.toString();
 							new Thread(new WriteThread()).start();
 						}
 					} else {
@@ -99,21 +97,24 @@ public class ServiceClipboardProxy extends Service {
 
 	protected synchronized boolean connect() {
 		if (socket == null || !socket.isConnected()) {
+			Log.d("Genyd", "connect ");
 			try {
 				InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 				socket = new Socket(serverAddr, SERVERPORT);
 				socket.setTcpNoDelay(true);
 				socket.setKeepAlive(true);
 			} catch (UnknownHostException e) {
-				e.printStackTrace();
+				Log.d("Genyd", "connect UnknownHostException " + e.getMessage());
 			} catch (IOException e) {
-				e.printStackTrace();
+				Log.d("Genyd", "connect IOException " + e.getMessage());
 			}
 		}
 
 		if (socket == null) {
 			return false;
 		}
+
+		Log.d("Genyd", "connected " + socket.isConnected());
 
 		return socket.isConnected();
 	}
@@ -136,7 +137,7 @@ public class ServiceClipboardProxy extends Service {
 					socket.getOutputStream().flush();
 					Log.d("Genyd", "WriteThread " + clipboardText);
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.d("Genyd", "write IOException " + e.getMessage());
 				}
 			}
 		}
@@ -147,7 +148,6 @@ public class ServiceClipboardProxy extends Service {
 		@Override
 		public void run() {
 			byte[] buffer = new byte[1024];
-			Handler mainHandler = new Handler(getMainLooper());
 
 			while (true) {
 				if (connect()) {
@@ -156,13 +156,13 @@ public class ServiceClipboardProxy extends Service {
 						if (len > 0) {
 							clipboardText = new String(buffer, 0, len);
 							Log.d("Genyd", "ReadThread " + clipboardText);
-							synchronized(stopRecursion) {
+							synchronized (stopRecursion) {
 								stopRecursion = true;
 								clipboardManager.setText(clipboardText);
 							}
 						}
 					} catch (IOException e) {
-						e.printStackTrace();
+						Log.d("Genyd", "read IOException " + e.getMessage());
 					}
 				}
 			}
