@@ -62,9 +62,6 @@ Socket::ReadStatus Socket::read(char *buf, int size)
         return Socket::NoMessage;
     }
 
-    buf[len] = '\0';
-    SLOGD("recv %s - %d", buf, len);
-
     return Socket::NewMessage;
 }
 
@@ -78,8 +75,6 @@ Socket::WriteStatus Socket::write(const char *buf, int size)
         SLOGE("write() error");
         return Socket::WriteError;
     }
-
-    SLOGD("write %s - %d", buf, len);
 
     return Socket::WriteSuccess;
 }
