@@ -9,6 +9,9 @@
 #include "socket.hpp"
 #include "dispatcher.hpp"
 
+#define SERVER_PORT 22666
+#define CLIPBOARD_SIZE 8192
+
 class Genyd {
 
 public:
@@ -24,6 +27,13 @@ private:
   Dispatcher dispatcher;
   std::map<int, Socket *> clients;
 
+  // socket to the clipboardProxy service
+  // this socket is included in clients too
+  Socket* clipboardProxy;
+
+  // Keep clipboard content
+  std::string clipboard;
+
   // Initialize fd_set for select() monitoring
   int setFS(fd_set *readfs, fd_set *writefs) const;
 
@@ -32,6 +42,9 @@ private:
 
   // Handle Socket::read status for a given client
   void treatMessage(Socket *client);
+
+  void sendHostClipboardToAndroid(const Request &request);
+  void sendAndroidClipboardToHost();
 
 public:
   // Start server
