@@ -8,9 +8,6 @@
 
 #include "genyd.hpp"
 
-#define SERVER_PORT 22666
-#define CLIPBOARD_SIZE 1024
-
 // Not defined for Android 2.3
 #ifndef INET_ADDRSTRLEN
 #define INET_ADDRSTRLEN 16
