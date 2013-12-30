@@ -53,6 +53,8 @@ Socket::ReadStatus Socket::read(char *buf, int size)
     int len = 0;
     char *cmd = 0;
 
+    memset(buf, 0, size);
+
     if ((len = ::read(socket, buf, size)) < 0) {
         SLOGE("recv() error");
         return Socket::ReadError;
@@ -61,8 +63,6 @@ Socket::ReadStatus Socket::read(char *buf, int size)
     if (len == 0) {
         return Socket::NoMessage;
     }
-
-    buf[len] = 0;
 
     return Socket::NewMessage;
 }
