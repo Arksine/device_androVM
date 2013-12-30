@@ -75,7 +75,7 @@ PRODUCT_COPY_FILES := \
     #device/androVM/common/google/com.android.location.provider.xml:system/etc/permissions/com.android.location.provider.xml \
     #device/androVM/common/libhoudini/libhoudini.so:system/lib/libhoudini.so \
     #device/androVM/common/libhoudini/libdvm_houdini.so:system/lib/libdvm_houdini.so \
-    
+
 
 #arm_files := $(call all-files-under,device/androVM/common/libhoudini/arm)
 #arm_files := check.xml libandroid_runtime.so libandroid.so libbinder.so libcamera_client.so libc_orig.so libcrypto.so libc.so libcutils.so libdl.so libEGL.so libemoji.so libETC1.so libexpat.so libgcomm_jni.so libGLESv1_CM.so libGLESv2.so libgui.so libhardware_legacy.so libhardware.so libicui18n.so libicuuc.so libjnigraphics.so libjpeg.so liblog.so libmedia.so libm.so libnativehelper.so libnetutils.so libnfc_ndef.so libOpenSLES.so libpixelflinger.so libskiagl.so libskia.so libsonivox.so libsqlite.so libssl.so libstdc++.so libtalk_jni.so libui.so libutils.so libvoicesearch.so libwpa_client.so libz.so linker
@@ -101,6 +101,7 @@ PRODUCT_PACKAGES += \
     androVM-prop \
     androVM-vbox-sf \
     vmconfig \
+    ClipboardProxy \
     vinput \
     vinput_seamless \
     local_opengl \
