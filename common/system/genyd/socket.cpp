@@ -62,6 +62,8 @@ Socket::ReadStatus Socket::read(char *buf, int size)
         return Socket::NoMessage;
     }
 
+    buf[len] = 0;
+
     return Socket::NewMessage;
 }
 
