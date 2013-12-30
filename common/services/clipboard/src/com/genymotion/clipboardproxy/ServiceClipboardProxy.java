@@ -15,6 +15,7 @@ import android.content.ClipboardManager;
 public class ServiceClipboardProxy extends Service implements
 		ClipboardManager.OnPrimaryClipChangedListener {
 
+        private static final int BUFFER_SIZE = 8192;
 	private static final int SERVERPORT = 22666;
 	private static final String SERVER_IP = "127.0.0.1";
 	private String myLabel;
@@ -138,7 +139,7 @@ public class ServiceClipboardProxy extends Service implements
 	class ReadThread implements Runnable {
 		@Override
 		public void run() {
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[BUFFER_SIZE];
 
 			while (true) {
 				if (connect()) {
