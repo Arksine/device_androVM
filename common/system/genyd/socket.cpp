@@ -5,8 +5,8 @@
 
 #include "socket.hpp"
 
-Socket::Socket(int socket)
-    : socket(socket)
+Socket::Socket(int socket) :
+    socket(socket)
 {
 
 }
@@ -36,8 +36,10 @@ Socket::ReadStatus Socket::read(void)
     istream.write(buffer, len);
 
     // Try to parse the current stream
-    // On success, stream is consumed
     if (request.ParseFromIstream(&istream)) {
+        // On success, clear stream
+        istream.str("");
+        istream.clear();
         return Socket::NewMessage;
     } else {
         SLOGE("Can't parse request");
@@ -45,9 +47,48 @@ Socket::ReadStatus Socket::read(void)
     }
 }
 
+// Read data from socket
+Socket::ReadStatus Socket::read(char *buf, int size)
+{
+    int len = 0;
+    char *cmd = 0;
+
+    memset(buf, 0, size);
+
+    if ((len = ::read(socket, buf, size)) < 0) {
+        SLOGE("recv() error");
+        return Socket::ReadError;
+    }
+
+    if (len == 0) {
+        return Socket::NoMessage;
+    }
+
+    return Socket::NewMessage;
+}
+
+// Write data to the socket
+Socket::WriteStatus Socket::write(const char *buf, int size)
+{
+    int len = 0;
+    char *cmd = 0;
+
+    if ((len = send(socket, buf, size, MSG_NOSIGNAL)) < 0) {
+        SLOGE("write() error");
+        return Socket::WriteError;
+    }
+
+    return Socket::WriteSuccess;
+}
+
 bool Socket::hasReplies(void) const
 {
     return replies.size();
+}
+
+bool Socket::hasRequests(void) const
+{
+    return requests.size();
 }
 
 Socket::WriteStatus Socket::reply(void)
@@ -68,7 +109,31 @@ Socket::WriteStatus Socket::reply(void)
         delete reply;
         return Socket::WriteError;
     }
+
     delete reply;
+    return Socket::WriteSuccess;
+}
+
+Socket::WriteStatus Socket::ask(void)
+{
+    std::string data;
+    int len = 0;
+
+    Request *request = requests.front();
+    requests.pop();
+
+    if (!request->SerializeToString(&data)) {
+        SLOGE("Can't serialize request");
+        delete request;
+        return Socket::BadSerialize;
+    }
+    if ((len = send(socket, data.c_str(), data.size(), MSG_NOSIGNAL)) < 0) {
+        SLOGE("Can't send request");
+        delete request;
+        return Socket::WriteError;
+    }
+
+    delete request;
     return Socket::WriteSuccess;
 }
 
@@ -85,4 +150,10 @@ const Request &Socket::getRequest(void) const
 void Socket::addReply(Reply *reply)
 {
     replies.push(reply);
+}
+
+
+void Socket::addRequest(Request *request)
+{
+    requests.push(request);
 }
