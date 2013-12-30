@@ -16,6 +16,7 @@ import android.text.ClipboardManager;
 
 public class ServiceClipboardProxy extends Service {
 
+        private static final int BUFFER_SIZE = 8192;
 	private static final int SERVERPORT = 22666;
 	private static final String SERVER_IP = "127.0.0.1";
 	private Socket socket;
@@ -147,7 +148,7 @@ public class ServiceClipboardProxy extends Service {
 	class ReadThread implements Runnable {
 		@Override
 		public void run() {
-			byte[] buffer = new byte[1024];
+			byte[] buffer = new byte[BUFFER_SIZE];
 
 			while (true) {
 				if (connect()) {

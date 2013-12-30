@@ -11,9 +11,9 @@ public class StartAtBootClipboardProxy extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 			Intent serviceIntent = new Intent(context, ServiceClipboardProxy.class);
-			
+
 			Log.d("clipboardproxy", "StartAtBootClipBoardProxy");
-			
+
 			context.startService(serviceIntent);
 		}
 	}
