@@ -50,6 +50,8 @@ message Parameter {
     GenymotionVersion  = 13; // string
     Capabilities       = 14; // JSON string
     FileName           = 15; // string
+    DeviceId           = 16; // string
+    AndroidId          = 17; // string
   }
 
   required Type  type = 1;
