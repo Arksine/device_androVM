@@ -41,6 +41,7 @@ LOCAL_SRC_FILES		:= main.cpp				\
 			   capabilities_handler.cpp		\
 			   accelerometer_handler.cpp		\
 			   archive_flash_handler.cpp            \
+			   deviceid_handler.cpp	                \
                            requests.pb.cpp
 
 LOCAL_MODULE		:= genyd
