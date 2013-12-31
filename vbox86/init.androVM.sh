@@ -81,7 +81,7 @@ if [ $prop_su_bypass ]; then
 fi
 
 # Setting Device Id system properties from VirtualBox properties
-prop_device_id=`/system/bin/androVM-prop get genymotion.device_id`
+prop_device_id=`/system/bin/androVM-prop get genymotion_device_id`
 if [ -n "$prop_device_id" ]; then
   setprop genyd.device.id "$prop_device_id"
 fi
