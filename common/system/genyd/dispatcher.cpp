@@ -19,6 +19,8 @@ Dispatcher::Dispatcher(void)
     getCallbacks[Parameter::GpsBearing] = &Dispatcher::getGpsBearing;
     getCallbacks[Parameter::Accelerometer] = &Dispatcher::getAccelerometerValues;
     getCallbacks[Parameter::Capabilities] = &Dispatcher::getCapabilities;
+    getCallbacks[Parameter::DeviceId] = &Dispatcher::getDeviceId;
+    getCallbacks[Parameter::AndroidId] = &Dispatcher::getAndroidId;
 
     // "SetParam" callback list
     setCallbacks[Parameter::BatteryStatus] = &Dispatcher::setBatteryStatus;
@@ -32,6 +34,8 @@ Dispatcher::Dispatcher(void)
     setCallbacks[Parameter::GpsBearing] = &Dispatcher::setGpsBearing;
     setCallbacks[Parameter::Accelerometer] = &Dispatcher::setAccelerometerValues;
     setCallbacks[Parameter::Clipboard] = &Dispatcher::setClipboard;
+    getCallbacks[Parameter::DeviceId] = &Dispatcher::setDeviceId;
+    getCallbacks[Parameter::AndroidId] = &Dispatcher::setAndroidId;
 }
 
 Dispatcher::~Dispatcher(void)
