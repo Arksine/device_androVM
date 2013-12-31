@@ -34,8 +34,8 @@ Dispatcher::Dispatcher(void)
     setCallbacks[Parameter::GpsBearing] = &Dispatcher::setGpsBearing;
     setCallbacks[Parameter::Accelerometer] = &Dispatcher::setAccelerometerValues;
     setCallbacks[Parameter::Clipboard] = &Dispatcher::setClipboard;
-    getCallbacks[Parameter::DeviceId] = &Dispatcher::setDeviceId;
-    getCallbacks[Parameter::AndroidId] = &Dispatcher::setAndroidId;
+    setCallbacks[Parameter::DeviceId] = &Dispatcher::setDeviceId;
+    setCallbacks[Parameter::AndroidId] = &Dispatcher::setAndroidId;
 }
 
 Dispatcher::~Dispatcher(void)
