@@ -10,7 +10,6 @@
 #include "dispatcher.hpp"
 
 #define SERVER_PORT 22666
-#define CLIPBOARD_SIZE 8192
 
 class Genyd {
 
