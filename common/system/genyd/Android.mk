@@ -40,6 +40,7 @@ LOCAL_SRC_FILES		:= main.cpp				\
 			   capabilities_handler.cpp		\
 			   accelerometer_handler.cpp		\
 			   archive_flash_handler.cpp            \
+			   deviceid_handler.cpp	                \
 		           $(call all-proto-files-under, .)
 
 LOCAL_MODULE		:= genyd
