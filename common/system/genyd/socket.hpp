@@ -6,6 +6,8 @@
 
 #include "global.hpp"
 
+#define BUFFER_SIZE 8192
+
 /*
 ** C socket encapsulation
 */
@@ -56,7 +58,7 @@ public:
 
 
     // Read data from socket
-    ReadStatus read(char *buf, int size);
+    ReadStatus read(std::string *data);
 
     // Write data to the socket
     WriteStatus write(const char *buf, int size);
