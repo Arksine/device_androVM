@@ -9,10 +9,18 @@ ro.genymotion.version=2.0.4
 # Capabilities
 #
 
+# Battery sensor
 ro.genyd.caps.bat=on
+# GPS sensor
 ro.genyd.caps.gps=on
+# Accelerometer sensor
 ro.genyd.caps.acc=on
-#ro.genyd.caps.cam=on
+# Webcam / camera sensor
+ro.genyd.caps.cam=on
+# Screencast / screenshot capability
 ro.genyd.caps.scr=on
+# Remote controller capability
 ro.genyd.caps.rmt=on
-# end system.prop for vbox86
+# DeviceID / IMEI and AndroidID emulation
+ro.genyd.caps.did=on
+
