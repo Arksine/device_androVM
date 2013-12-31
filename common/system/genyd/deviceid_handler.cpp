@@ -42,11 +42,9 @@ static void buildStringReply(Reply *reply, const std::string &strValue)
 
 void Dispatcher::getDeviceId(const Request &request, Reply *reply)
 {
-    SLOGE("Getting DeviceID");
-
     // Read Device ID
-    //std::string deviceId = "012962001339909"s;
     std::string deviceId = getStdStringProperty(DEVICE_ID);
+    SLOGD("Getting DeviceID value: '%s'", deviceId.c_str());
 
     // Build reply
     buildStringReply(reply, deviceId);
@@ -54,13 +52,13 @@ void Dispatcher::getDeviceId(const Request &request, Reply *reply)
 
 void Dispatcher::setDeviceId(const Request &request, Reply *reply)
 {
-    SLOGE("Setting DeviceID");
-
     // Read Device ID from request
-    std::string androidId = request.parameter().value().stringvalue();
+    std::string deviceId = request.parameter().value().stringvalue();
+
+    SLOGD("Setting DeviceID value to '%s'", deviceId.c_str());
 
     // Apply new DeviceID by setting property
-    property_set(DEVICE_ID, androidId.c_str());
+    property_set(DEVICE_ID, deviceId.c_str());
 
     // Build standard OK reply;
     buildOkReply(reply);
@@ -71,8 +69,9 @@ void Dispatcher::getAndroidId(const Request &request, Reply *reply)
     SLOGE("Getting AndroidID");
 
     // Read android ID
-    //std::string androidId = "666"s;
     std::string androidId = getStdStringProperty(ANDROID_ID);
+
+    SLOGD("Getting AndroidID value: '%s'", androidId.c_str());
 
     // Build reply
     buildStringReply(reply, androidId);
@@ -80,10 +79,10 @@ void Dispatcher::getAndroidId(const Request &request, Reply *reply)
 
 void Dispatcher::setAndroidId(const Request &request, Reply *reply)
 {
-    SLOGE("Setting AndroidID");
-
     // Read Device ID from request
     std::string androidId = request.parameter().value().stringvalue();
+
+    SLOGD("Setting AndroidID value to '%s'", androidId.c_str());
 
     // Apply new DeviceID by setting property
     property_set(ANDROID_ID, androidId.c_str());
