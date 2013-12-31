@@ -21,7 +21,7 @@ static std::string getCapabilitiesJSON(void)
     capabilities += "\"camera\" : \""        + getcapability(CAPABILITY_CAMERA)        + "\", ";
     capabilities += "\"screencast\" : \""    + getcapability(CAPABILITY_SCREENCAST)    + "\", ";
     capabilities += "\"remotectl\" : \""     + getcapability(CAPABILITY_REMOTECTL)     + "\", ";
-    capabilities += "\"deviceid\" : \""      + getcapability(CAPABILITY_DEVICEID)     + "\", ";
+    capabilities += "\"deviceid\" : \""      + getcapability(CAPABILITY_DEVICEID)      + "\", ";
     capabilities += "}";
 
     return capabilities;
