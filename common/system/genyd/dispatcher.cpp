@@ -33,8 +33,8 @@ Dispatcher::Dispatcher(void)
     setCallbacks[Parameter::GpsAccuracy] = &Dispatcher::setGpsAccuracy;
     setCallbacks[Parameter::GpsBearing] = &Dispatcher::setGpsBearing;
     setCallbacks[Parameter::Accelerometer] = &Dispatcher::setAccelerometerValues;
-    getCallbacks[Parameter::DeviceId] = &Dispatcher::setDeviceId;
-    getCallbacks[Parameter::AndroidId] = &Dispatcher::setAndroidId;
+    setCallbacks[Parameter::DeviceId] = &Dispatcher::setDeviceId;
+    setCallbacks[Parameter::AndroidId] = &Dispatcher::setAndroidId;
 }
 
 Dispatcher::~Dispatcher(void)
