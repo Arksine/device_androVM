@@ -84,6 +84,8 @@ fi
 prop_device_id=`/system/bin/androVM-prop get genymotion_device_id`
 if [ -n "$prop_device_id" ]; then
   setprop genyd.device.id "$prop_device_id"
+else
+  setprop genyd.device.id "00000000000000"
 fi
 
 # UVESAFB
