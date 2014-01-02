@@ -26,7 +26,7 @@ static std::string getCapabilitiesJSON(void)
     return capabilities;
 }
 
-void Dispatcher::getCapabilities(const Request &request, Reply *reply)
+void Dispatcher::getCapabilities(const Request &request, Reply *reply, Genyd *genyd)
 {
     (void)request;
 
