@@ -14,10 +14,10 @@ ro.genymotion.version=2.0.2
 # Capabilities
 #
 
-ro.genyd.caps.bat=on
-ro.genyd.caps.gps=on
-ro.genyd.caps.acc=on
-ro.genyd.caps.cam=on
-ro.genyd.caps.scr=on
-ro.genyd.caps.rmt=on
+ro.genyd.caps.bat=on   # Battery sensor
+ro.genyd.caps.gps=on   # GPS sensor
+ro.genyd.caps.acc=on   # Accelerometer sensor
+ro.genyd.caps.cam=on   # Webcam / camera sensor
+ro.genyd.caps.scr=on   # Screencast / screenshot capability
+ro.genyd.caps.rmt=on   # Remote controller capability
 ro.genyd.caps.did=on   # DeviceID / IMEI and AndroidID number emulators
