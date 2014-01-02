@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.lang.StringBuilder;
 
 import android.app.Service;
 import android.content.ClipData;
@@ -146,12 +147,15 @@ public class ServiceClipboardProxy extends Service implements
 					try {
 						int len = socket.getInputStream().read(buffer);
 						if (len > 0) {
-							clipboardText = new String(buffer, 0, len);
+                                                        StringBuilder clipboardData = new StringBuilder(new String(buffer, 0, len));
+
 							// Handle big clipboard
                                                         while (len == BUFFER_SIZE) {
 								len = socket.getInputStream().read(buffer);
-								clipboardText += new String(buffer, 0, len);
+								clipboardData.append(new String(buffer, 0, len));
                                                         }
+
+							clipboardText = clipboardData.toString();
 
 							Log.d("ServiceClipboardProxy", "Read " + String.valueOf(clipboardText.length()) + " bytes");
 							clipboardManager.setPrimaryClip(ClipData
