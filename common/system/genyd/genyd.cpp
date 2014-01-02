@@ -127,7 +127,7 @@ void Genyd::sendHostClipboardToAndroid(const Request &request)
         Parameter param = request.parameter();
         if (param.has_value()) {
             // If clipboardProxy already connected, send the new clipboard
-            if(clipboardProxy) {
+            if (clipboardProxy) {
                 clipboardProxy->write(param.value().stringvalue().c_str(), param.value().stringvalue().size());
             }
             else {
@@ -138,47 +138,47 @@ void Genyd::sendHostClipboardToAndroid(const Request &request)
     }
 }
 
-void Genyd::sendAndroidClipboardToHost()
+void Genyd::sendAndroidClipboardToHost(void)
 {
-    if(clipboardProxy) {
-        char clipboardText[CLIPBOARD_SIZE];
+    if (!clipboardProxy) {
+        return;
+    }
 
-        Socket::ReadStatus status = clipboardProxy->read(clipboardText, CLIPBOARD_SIZE);
+    std::string clipboardText = "";
 
-        switch (status) {
-        case Socket::ReadError:
-            SLOGE("clipboardProxy read error");
-        case Socket::NoMessage:
-            clients.erase(clipboardProxy->getFD());
-            delete clipboardProxy;
-            clipboardProxy = NULL;
-            break;
-        case Socket::NewMessage:
-            // Broadcast message to all clients
-        {
-            std::map<int, Socket*>::iterator begin = clients.begin();
-            std::map<int, Socket*>::iterator end = clients.end();
-            while (begin != end) {
-                if(begin->second != clipboardProxy) {
-                    Request *request = new Request();
-                    request->set_type(Request::PushData);
-                    Parameter *parameter = request->mutable_parameter();
-                    parameter->set_type(Parameter::Clipboard);
-                    Value *value = parameter->mutable_value();
-                    value->set_type(Value::String);
-                    value->set_stringvalue(clipboardText);
+    Socket::ReadStatus status = clipboardProxy->read(&clipboardText);
 
-                    begin->second->addRequest(request);
-                    begin->second->ask();
-                }
-                ++begin;
+    switch (status) {
+    case Socket::ReadError:
+        SLOGE("clipboardProxy read error");
+        break;
+    case Socket::NoMessage:
+        clients.erase(clipboardProxy->getFD());
+        delete clipboardProxy;
+        clipboardProxy = NULL;
+        break;
+    case Socket::NewMessage: {
+        // Broadcast message to all clients
+        std::map<int, Socket *>::iterator begin = clients.begin();
+        std::map<int, Socket *>::iterator end = clients.end();
+        while (begin != end) {
+            if (begin->second != clipboardProxy) {
+                Request *request = new Request();
+                request->set_type(Request::PushData);
+                Parameter *parameter = request->mutable_parameter();
+                parameter->set_type(Parameter::Clipboard);
+                Value *value = parameter->mutable_value();
+                value->set_type(Value::String);
+                value->set_stringvalue(clipboardText);
+                begin->second->addRequest(request);
             }
+            ++begin;
         }
-            break;
-        case Socket::UnknownMessage:
-        default:
-            SLOGE("Unknown clipboardProxy status");
-        }
+        break;
+    }
+    case Socket::UnknownMessage:
+    default:
+        break;
     }
 }
 
@@ -202,16 +202,17 @@ void Genyd::run(void)
             acceptNewClient();
         }
 
-        std::map<int, Socket*>::iterator begin = clients.begin();
-        std::map<int, Socket*>::iterator end = clients.end();
+        std::map<int, Socket *>::iterator begin = clients.begin();
+        std::map<int, Socket *>::iterator end = clients.end();
 
         // Handle messages for clients
         while (begin != end) {
             // Ready read
             if (FD_ISSET(begin->first, &readfs)) {
-                if(begin->second == clipboardProxy) {
+                if (begin->second == clipboardProxy) {
                     sendAndroidClipboardToHost();
-                     ++begin;
+                    ++begin;
+                    // Next client
                     continue;
                 }
                 else {
@@ -219,18 +220,21 @@ void Genyd::run(void)
                     switch (status) {
                     case Socket::ReadError:
                         SLOGE("Socket read error");
+                        break;
                     case Socket::NoMessage:
                         delete begin->second;
                         clients.erase(begin++);
                         SLOGD("Socket deconnection");
+                        // Next client
                         continue;
-                        break;
                     case Socket::NewMessage:
-                    case Socket::UnknownMessage:
                         treatMessage(begin->second);
+                        break;
+                    case Socket::UnknownMessage:
                         break;
                     default:
                         SLOGE("Unknown socket status");
+                        break;
                     }
                 }
             }
@@ -252,10 +256,12 @@ void Genyd::run(void)
                     SLOGD("Socket write error with client %d", begin->first);
                     delete begin->second;
                     clients.erase(begin++);
+                    // Next client
                     continue;
                 }
             }
 
+            // Next client
             ++begin;
         }
     }
