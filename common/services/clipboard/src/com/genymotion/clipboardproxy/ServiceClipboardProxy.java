@@ -147,6 +147,12 @@ public class ServiceClipboardProxy extends Service implements
 						int len = socket.getInputStream().read(buffer);
 						if (len > 0) {
 							clipboardText = new String(buffer, 0, len);
+							// Handle big clipboard
+                                                        while (len == BUFFER_SIZE) {
+								len = socket.getInputStream().read(buffer);
+								clipboardText += new String(buffer, 0, len);
+                                                        }
+
 							Log.d("ServiceClipboardProxy", "Read " + String.valueOf(clipboardText.length()) + " bytes");
 							clipboardManager.setPrimaryClip(ClipData
 									.newPlainText(myLabel, clipboardText));
