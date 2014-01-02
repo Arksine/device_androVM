@@ -10,7 +10,7 @@
 #include "libgenyd.hpp"
 #include "sensor.hpp"
 
-void Dispatcher::setAccelerometerValues(const Request &request, Reply *reply)
+void Dispatcher::setAccelerometerValues(const Request &request, Reply *reply, Genyd *genyd)
 {
     std::string acceleration = request.parameter().value().stringvalue();
     t_sensor_data event;
@@ -49,7 +49,7 @@ void Dispatcher::setAccelerometerValues(const Request &request, Reply *reply)
     close(sock);
 }
 
-void Dispatcher::getAccelerometerValues(const Request &request, Reply *reply)
+void Dispatcher::getAccelerometerValues(const Request &request, Reply *reply, Genyd *genyd)
 {
     // Prepare response
     reply->set_type(Reply::Value);

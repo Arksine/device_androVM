@@ -11,7 +11,7 @@
 #define CHECK_ARCHIVE_SCRIPT "/system/bin/check-archive.sh"
 #define FLASH_ARCHIVE_SCRIPT "/system/bin/flash-archive.sh"
 
-void Dispatcher::checkArchive(const Request &request, Reply *reply)
+void Dispatcher::checkArchive(const Request &request, Reply *reply, Genyd *genyd)
 {
     std::string archive_path = request.parameter().value().stringvalue();
 
@@ -36,7 +36,7 @@ void Dispatcher::checkArchive(const Request &request, Reply *reply)
     }
 }
 
-void Dispatcher::flashArchive(const Request &request, Reply *reply)
+void Dispatcher::flashArchive(const Request &request, Reply *reply, Genyd *genyd)
 {
     std::string archive_path = request.parameter().value().stringvalue();
 

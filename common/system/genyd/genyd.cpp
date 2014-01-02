@@ -115,27 +115,7 @@ void Genyd::acceptNewClient(void)
 void Genyd::treatMessage(Socket *client)
 {
     const Request &request = client->getRequest();
-    sendHostClipboardToAndroid(request);
-    client->addReply(dispatcher.dispatchRequest(request));
-}
-
-void Genyd::sendHostClipboardToAndroid(const Request &request)
-{
-    if(request.type() == Request::SetParam &&
-            request.parameter().type() == Parameter::Clipboard) {
-
-        Parameter param = request.parameter();
-        if (param.has_value()) {
-            // If clipboardProxy already connected, send the new clipboard
-            if (clipboardProxy) {
-                clipboardProxy->write(param.value().stringvalue().c_str(), param.value().stringvalue().size());
-            }
-            else {
-                // Else, keep clipboard value, it will be send when clipboardProxy will connect
-                clipboard = param.value().stringvalue();
-            }
-        }
-    }
+    client->addReply(dispatcher.dispatchRequest(request, this));
 }
 
 void Genyd::sendAndroidClipboardToHost(void)
@@ -223,6 +203,9 @@ void Genyd::run(void)
                         break;
                     case Socket::NoMessage:
                         delete begin->second;
+                        if (begin->second == clipboardProxy) {
+                            clipboardProxy = NULL;
+                        }
                         clients.erase(begin++);
                         SLOGD("Socket deconnection");
                         // Next client
@@ -270,4 +253,14 @@ void Genyd::run(void)
 bool Genyd::isInit(void) const
 {
     return (server);
+}
+
+Socket *Genyd::getClipboardClient(void)
+{
+    return clipboardProxy;
+}
+
+void Genyd::storeClipboard(const std::string &clipboard)
+{
+    this->clipboard = clipboard;
 }
