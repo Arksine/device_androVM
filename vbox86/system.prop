@@ -20,4 +20,4 @@ ro.genyd.caps.acc=on
 ro.genyd.caps.cam=on
 ro.genyd.caps.scr=on
 ro.genyd.caps.rmt=on
-ro.genyd.caps.did=on
+ro.genyd.caps.did=on   # DeviceID / IMEI and AndroidID number emulators
