@@ -78,6 +78,9 @@ void *SocketStream::allocBuffer(size_t minSize)
             m_buf = NULL;
             m_bufsize = 0;
         }
+    } else if (m_bufsize > allocSize) {
+        ERR("%s: something strange here (%d > %d )\n", __FUNCTION__,
+            m_bufsize, allocSize);
     }
 
     return m_buf;
@@ -90,21 +93,31 @@ int SocketStream::commitBuffer(size_t size)
 
 int SocketStream::writeFully(const void* buffer, size_t size)
 {
-    if (!valid()) return -1;
+    if (!valid()) {
+        ERR("%s: invalid!\n", __FUNCTION__);
+        return -1;
+    }
 
     size_t res = size;
     int retval = 0;
-
+    /*ERR("%s:%d Thread:%u Pid:%d\n", __FUNCTION__, __LINE__, pthread_self(),
+        getpid());
+    */
     while (res > 0) {
         ssize_t stat = ::send(m_sock, (const char *)buffer + (size - res), res, 0);
         if (stat < 0) {
             if (errno != EINTR) {
                 retval =  stat;
-                ERR("%s: failed: %s\n", __FUNCTION__, strerror(errno));
+                ERR("%s: failed: %s (stat:%d, res:%d, size:%d)\n", __FUNCTION__, strerror(errno),
+                    stat, res, size);
                 break;
             }
         } else {
             res -= stat;
+        }
+        if (stat == 0) {
+            ERR("%s: %d : failed: %s (stat:%d, res:%d, size:%d)\n", __FUNCTION__, __LINE__, strerror(errno),
+                    stat, res, size);
         }
     }
     return retval;
@@ -113,9 +126,13 @@ int SocketStream::writeFully(const void* buffer, size_t size)
 const unsigned char *SocketStream::readFully(void *buf, size_t len)
 {
     const unsigned char* ret = NULL;
-    if (!valid()) return NULL;
+    if (!valid()) {
+        ERR("%s: invalid!", __FUNCTION__);
+        return NULL;
+    }
     if (!buf) {
-      return NULL;  // do not allow NULL buf in that implementation
+        ERR("%s: buf is NULL", __FUNCTION__);
+        return NULL;  // do not allow NULL buf in that implementation
     }
     size_t res = len;
     while (res > 0) {
@@ -125,6 +142,7 @@ const unsigned char *SocketStream::readFully(void *buf, size_t len)
             continue;
         }
         if (stat == 0 || errno != EINTR) { // client shutdown or error
+            ERR("%s:%d client shutdown connection", __FUNCTION__, __LINE__);
             return NULL;
         }
     }
@@ -133,9 +151,13 @@ const unsigned char *SocketStream::readFully(void *buf, size_t len)
 
 const unsigned char *SocketStream::read( void *buf, size_t *inout_len)
 {
-    if (!valid()) return NULL;
+    if (!valid()) {
+        ERR("%s: invalid!", __FUNCTION__);
+        return NULL;
+    }
     if (!buf) {
-      return NULL;  // do not allow NULL buf in that implementation
+        ERR("%s: buf is NULL", __FUNCTION__);
+        return NULL;  // do not allow NULL buf in that implementation
     }
 
     int n;
@@ -147,13 +169,16 @@ const unsigned char *SocketStream::read( void *buf, size_t *inout_len)
         *inout_len = n;
         return (const unsigned char *)buf;
     }
-
+    ERR("%s: NULL", __FUNCTION__);
     return NULL;
 }
 
 int SocketStream::recv(void *buf, size_t len)
 {
-    if (!valid()) return int(ERR_INVALID_SOCKET);
+    if (!valid()) {
+        ERR("%s: invalid!", __FUNCTION__);
+        return int(ERR_INVALID_SOCKET);
+    }
     int res = 0;
     while(true) {
         res = ::recv(m_sock, (char *)buf, len, 0);

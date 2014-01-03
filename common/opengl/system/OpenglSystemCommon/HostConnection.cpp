@@ -100,7 +100,8 @@ HostConnection *HostConnection::get()
         *pClientFlags = 0;
         con->m_stream->commitBuffer(sizeof(unsigned int));
 
-        ALOGD("HostConnection::get() New Host Connection established %p, tid %d\n", con, gettid());
+        ALOGD("HostConnection::get() New Host Connection established %p, tid %d stream %p\n", con,
+              gettid(), con->m_stream);
         tinfo->hostConn = con;
     }
 

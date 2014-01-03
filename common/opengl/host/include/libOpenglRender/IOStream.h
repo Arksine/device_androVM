@@ -19,15 +19,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <utils/threads.h>
+
+#include <cutils/threads.h>
+#include <cutils/atomic.h>
+
 #include "ErrorLog.h"
 
 class IOStream {
 public:
-
     IOStream(size_t bufSize) {
         m_buf = NULL;
         m_bufsize = bufSize;
         m_free = 0;
+        mutex_init(&m_lock);
     }
 
     virtual void *allocBuffer(size_t minSize) = 0;
@@ -37,8 +42,15 @@ public:
     virtual int writeFully(const void* buf, size_t len) = 0;
 
     virtual ~IOStream() {
-
+        mutex_destroy(&m_lock);
         // NOTE: m_buf is 'owned' by the child class thus we expect it to be released by it
+    }
+
+    void lock(void) {
+        mutex_lock(&m_lock);
+    }
+    void unlock(void) {
+        mutex_unlock(&m_lock);
     }
 
     unsigned char *alloc(size_t len) {
@@ -88,6 +100,7 @@ private:
     unsigned char *m_buf;
     size_t m_bufsize;
     size_t m_free;
+    mutex_t m_lock;
 };
 
 //
