@@ -2,6 +2,9 @@
 # system.prop for Genymotion
 #
 
+# Disable opengl Zygote preloading to avoid opengl problems
+ro.zygote.disable_gl_preload=true
+
 rild.libpath=/system/lib/libreference-ril.so
 rild.libargs=-d /dev/ttyS0
 dalvik.vm.heapsize=256m
