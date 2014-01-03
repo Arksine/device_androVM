@@ -45,6 +45,12 @@ service genyd /system/bin/genyd
 on boot
     start genyd
 
+service wpa_supplicant /system/bin/wpa_supplicant -ieth1 -Dwired -c/data/misc/wifi/wpa_supplicant.conf -e/data/misc/wifi/entropy.bin -g@android:wpa_eth1
+    class main
+    socket wpa_eth1 dgram 660 wifi wifi
+    disabled
+    oneshot
+
 service dhcpcd_eth1 /system/bin/dhcpcd -ABKL
     class main
     disabled
@@ -54,11 +60,6 @@ service iprenew_eth1 /system/bin/dhcpcd -n
     disabled
     oneshot
 
-service wpa_supplicant /system/bin/wpa_supplicant -ieth1 -Dwired -c/data/misc/wifi/wpa_supplicant.conf -e/data/misc/wifi/entropy.bin
-    class main
-    socket wpa_eth1 dgram 660 wifi wifi
-    disabled
-    oneshot
 service vbox86-setup /system/etc/init.androVM.sh
     oneshot
     class very-first
