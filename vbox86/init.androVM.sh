@@ -83,8 +83,10 @@ fi
 # Setting Device Id system properties from VirtualBox properties
 prop_device_id=$(/system/bin/androVM-prop get genymotion_device_id)
 if [ $? -ne 0 ]; then
+  # Default value if unset
   setprop genyd.device.id "00000000000000"
 else
+  # Set user defined value. "[none]" keyword means empty value
   setprop genyd.device.id "$prop_device_id"
 fi
 
