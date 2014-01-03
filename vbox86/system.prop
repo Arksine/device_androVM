@@ -27,6 +27,6 @@ ro.genyd.caps.cam=on
 ro.genyd.caps.scr=on
 # Remote controller capability
 ro.genyd.caps.rmt=on
-# DeviceID / IMEI and AndroidID number emulators
+# DeviceID / IMEI and AndroidID emulation
 ro.genyd.caps.did=on
 
