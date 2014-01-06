@@ -51,6 +51,8 @@ message Parameter {
     Capabilities       = 14; // JSON string
     FileName           = 15; // string
     Clipboard          = 16; // string
+    DeviceId           = 17; // string
+    AndroidId          = 18; // string
   }
 
   required Type  type  = 1;

@@ -70,5 +70,10 @@ using Genymotion::Value;
 #define CAPABILITY_CAMERA        CAPABILITY_PREFIX "cam"
 #define CAPABILITY_SCREENCAST    CAPABILITY_PREFIX "scr"
 #define CAPABILITY_REMOTECTL     CAPABILITY_PREFIX "rmt"
+#define CAPABILITY_DEVICEID      CAPABILITY_PREFIX "did"
+
+// DEVICE IDs
+#define DEVICE_ID                KEY_PREFIX "device.id"
+#define ANDROID_ID               KEY_PREFIX "android.id"
 
 #endif

@@ -143,6 +143,17 @@ private:
 
     void checkArchive(const Request &request, Reply *reply, Genyd *genyd);
     void flashArchive(const Request &request, Reply *reply, Genyd *genyd);
+
+    //////////////////////////////////////////
+    // DeviceID / IMEI / AndroidID requests //
+    // deviceid_handler.cpp                 //
+    //////////////////////////////////////////
+
+    void getDeviceId(const Request &request, Reply *reply, Genyd *genyd);
+    void setDeviceId(const Request &request, Reply *reply, Genyd *genyd);
+
+    void getAndroidId(const Request &request, Reply *reply, Genyd *genyd);
+    void setAndroidId(const Request &request, Reply *reply, Genyd *genyd);
 };
 
 #endif
