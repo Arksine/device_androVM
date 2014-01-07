@@ -99,11 +99,13 @@ enum Parameter_Type {
   Parameter_Type_GenymotionVersion = 13,
   Parameter_Type_Capabilities = 14,
   Parameter_Type_FileName = 15,
-  Parameter_Type_Clipboard = 16
+  Parameter_Type_Clipboard = 16,
+  Parameter_Type_DeviceId = 17,
+  Parameter_Type_AndroidId = 18
 };
 bool Parameter_Type_IsValid(int value);
 const Parameter_Type Parameter_Type_Type_MIN = Parameter_Type_None;
-const Parameter_Type Parameter_Type_Type_MAX = Parameter_Type_Clipboard;
+const Parameter_Type Parameter_Type_Type_MAX = Parameter_Type_AndroidId;
 const int Parameter_Type_Type_ARRAYSIZE = Parameter_Type_Type_MAX + 1;
 
 const ::google::protobuf::EnumDescriptor* Parameter_Type_descriptor();
@@ -525,6 +527,8 @@ class Parameter : public ::google::protobuf::Message {
   static const Type Capabilities = Parameter_Type_Capabilities;
   static const Type FileName = Parameter_Type_FileName;
   static const Type Clipboard = Parameter_Type_Clipboard;
+  static const Type DeviceId = Parameter_Type_DeviceId;
+  static const Type AndroidId = Parameter_Type_AndroidId;
   static inline bool Type_IsValid(int value) {
     return Parameter_Type_IsValid(value);
   }
