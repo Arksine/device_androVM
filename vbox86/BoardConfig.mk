@@ -24,7 +24,7 @@ BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # For VirtualBox and likely other emulators
 BOARD_INSTALLER_CMDLINE := init=/init console=tty0 vga=788 quiet
-BOARD_KERNEL_CMDLINE := init=/init console=tty0 androidboot.hardware=vbox86 androidboot.console=tty0
+BOARD_KERNEL_CMDLINE := init=/init console=tty0 quiet androidboot.hardware=vbox86 androidboot.console=tty0
 TARGET_USE_DISKINSTALLER := true
 
 TARGET_DISK_LAYOUT_CONFIG := build/target/board/vbox_x86/disk_layout.conf
