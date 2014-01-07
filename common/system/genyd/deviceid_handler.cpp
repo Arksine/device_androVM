@@ -40,7 +40,7 @@ static void buildStringReply(Reply *reply, const std::string &strValue)
 // Genymotion daemon verbs //
 /////////////////////////////
 
-void Dispatcher::getDeviceId(const Request &request, Reply *reply)
+void Dispatcher::getDeviceId(const Request &request, Reply *reply, Genyd* genyd)
 {
     // Read Device ID
     std::string deviceId = getStdStringProperty(DEVICE_ID);
@@ -50,7 +50,7 @@ void Dispatcher::getDeviceId(const Request &request, Reply *reply)
     buildStringReply(reply, deviceId);
 }
 
-void Dispatcher::setDeviceId(const Request &request, Reply *reply)
+void Dispatcher::setDeviceId(const Request &request, Reply *reply, Genyd* genyd)
 {
     // Read Device ID from request
     std::string deviceId = request.parameter().value().stringvalue();
@@ -64,7 +64,7 @@ void Dispatcher::setDeviceId(const Request &request, Reply *reply)
     buildOkReply(reply);
 }
 
-void Dispatcher::getAndroidId(const Request &request, Reply *reply)
+void Dispatcher::getAndroidId(const Request &request, Reply *reply, Genyd* genyd)
 {
     SLOGE("Getting AndroidID");
 
@@ -77,7 +77,7 @@ void Dispatcher::getAndroidId(const Request &request, Reply *reply)
     buildStringReply(reply, androidId);
 }
 
-void Dispatcher::setAndroidId(const Request &request, Reply *reply)
+void Dispatcher::setAndroidId(const Request &request, Reply *reply, Genyd* genyd)
 {
     // Read Device ID from request
     std::string androidId = request.parameter().value().stringvalue();
