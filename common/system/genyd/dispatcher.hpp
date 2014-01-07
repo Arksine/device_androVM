@@ -149,11 +149,11 @@ private:
     // deviceid_handler.cpp                 //
     //////////////////////////////////////////
 
-    void getDeviceId(const Request &request, Reply *reply);
-    void setDeviceId(const Request &request, Reply *reply);
+    void getDeviceId(const Request &request, Reply *reply, Genyd* genyd);
+    void setDeviceId(const Request &request, Reply *reply, Genyd* genyd);
 
-    void getAndroidId(const Request &request, Reply *reply);
-    void setAndroidId(const Request &request, Reply *reply);
+    void getAndroidId(const Request &request, Reply *reply, Genyd* genyd);
+    void setAndroidId(const Request &request, Reply *reply, Genyd* genyd);
 };
 
 #endif
