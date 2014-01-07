@@ -81,10 +81,18 @@ if [ $prop_su_bypass ]; then
 fi
 
 # UVESAFB
-insmod /system/lib/cfbcopyarea.ko
-insmod /system/lib/cfbfillrect.ko
-insmod /system/lib/cfbimgblt.ko
 insmod /system/lib/uvesafb.ko mode_option=$vbox_graph_mode scroll=redraw
+
+# Bluetooth
+insmod /system/lib/bluetooth.ko
+insmod /system/lib/rfcomm.ko
+insmod /system/lib/hifp.ko
+insmod /system/lib/btusb.ko
+insmod /system/lib/bfusb.ko
+insmod /system/lib/ath3k.ko
+insmod /system/lib/bcm203x.ko
+insmod /system/lib/bnep.ko
+insmod /system/lib/bpa10x.ko
 
 setprop ro.sf.lcd_density $vbox_dpi
 
