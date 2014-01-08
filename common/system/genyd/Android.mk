@@ -4,7 +4,7 @@ LOCAL_PATH		:= $(call my-dir)
 ## Genyd library ##
 ###################
 
-# Build Library
+# Build shared library
 include $(CLEAR_VARS)
 
 LOCAL_CFLAGS            := -Wall
@@ -22,6 +22,26 @@ LOCAL_SHARED_LIBRARIES  := liblog libcutils libstlport
 LOCAL_MODULE            := libgenyd
 
 include $(BUILD_SHARED_LIBRARY)
+
+
+# Build static library
+include $(CLEAR_VARS)
+
+LOCAL_CFLAGS            := -Wall -O2
+
+LOCAL_C_INCLUDES        := $(LOCAL_PATH) \
+                           bionic \
+                           external/stlport/stlport
+
+LOCAL_SRC_FILES         := lib/libgenyd.cpp \
+                           lib/sensor_battery.cpp
+
+LOCAL_MODULE_TAGS       := optional
+LOCAL_STATIC_LIBRARIES  := liblog libcutils libstlport_static
+
+LOCAL_MODULE            := libgenyd
+
+include $(BUILD_STATIC_LIBRARY)
 
 
 ##################
@@ -53,7 +73,7 @@ LOCAL_C_INCLUDES	:= $(KERNEL_HEADERS)       		  \
 
 LOCAL_MODULE_TAGS	:= optional
 
-LOCAL_CFLAGS		:= -Werror=format
+LOCAL_CFLAGS		:= -Wall -02
 
 LOCAL_SHARED_LIBRARIES	:= libcutils	\
 			   libnetutils	\
