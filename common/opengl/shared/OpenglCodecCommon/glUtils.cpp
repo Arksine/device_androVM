@@ -109,6 +109,7 @@ size_t glUtilsParamSize(GLenum param)
     case GL_POINT_SIZE_MIN:
     case GL_POINT_SIZE_MAX:
     case GL_POINT_FADE_THRESHOLD_SIZE:
+    case GL_CULL_FACE:
     case GL_CULL_FACE_MODE:
     case GL_FRONT_FACE:
     case GL_SHADE_MODEL:
@@ -129,6 +130,7 @@ size_t glUtilsParamSize(GLenum param)
     case GL_BLEND_DST:
     case GL_BLEND_SRC:
     case GL_BLEND:
+    case GL_DITHER:
     case GL_LOGIC_OP_MODE:
     case GL_SCISSOR_TEST:
     case GL_MAX_TEXTURE_UNITS:
