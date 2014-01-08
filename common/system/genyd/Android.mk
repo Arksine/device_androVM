@@ -73,7 +73,7 @@ LOCAL_C_INCLUDES	:= $(KERNEL_HEADERS)       		  \
 
 LOCAL_MODULE_TAGS	:= optional
 
-LOCAL_CFLAGS		:= -Wall -02
+LOCAL_CFLAGS		:= -Wall -O2
 
 LOCAL_SHARED_LIBRARIES	:= libcutils	\
 			   libnetutils	\
