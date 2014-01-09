@@ -60,3 +60,6 @@ USE_OPENGL_RENDERER := true
 
 #HOUDINI
 INTEL_HOUDINI := true
+
+#SuperUser
+SUPERUSER_PACKAGE := com.genymotion.superuser
