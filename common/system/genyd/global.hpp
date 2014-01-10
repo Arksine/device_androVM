@@ -74,6 +74,5 @@ using Genymotion::Value;
 
 // DEVICE IDs
 #define DEVICE_ID                KEY_PREFIX "device.id"
-#define ANDROID_ID               KEY_PREFIX "android.id"
 
 #endif
