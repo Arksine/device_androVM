@@ -3847,7 +3847,7 @@ void glDeleteFramebuffersOES_enc(void *self , GLsizei n, const GLuint* framebuff
 
 void glGenFramebuffersOES_enc(void *self , GLsizei n, GLuint* framebuffers)
 {
-
+    ALOGE("%s\n", __FUNCTION__);
 	gl_encoder_context_t *ctx = (gl_encoder_context_t *)self;
 	IOStream *stream = ctx->m_stream;
 
@@ -3860,7 +3860,9 @@ void glGenFramebuffersOES_enc(void *self , GLsizei n, GLuint* framebuffers)
 
 		memcpy(ptr, &n, 4); ptr += 4;
 	*(unsigned int *)(ptr) = __size_framebuffers; ptr += 4;
-	stream->readback(framebuffers, __size_framebuffers);
+	if (!stream->readback(framebuffers, __size_framebuffers)) {
+            ALOGE("%s:Readback failed\n", __FUNCTION__);
+        }
 }
 
 GLenum glCheckFramebufferStatusOES_enc(void *self , GLenum target)

@@ -7,6 +7,7 @@
 
 #include "gl2_enc.h"
 
+#include <utils/threads.h>
 
 #include <stdio.h>
 static void enc_unsupported()
@@ -872,20 +873,33 @@ void glGenerateMipmap_enc(void *self , GLenum target)
 
 void glGenFramebuffers_enc(void *self , GLsizei n, GLuint* framebuffers)
 {
-
+    ALOGE("%s: pid:%d thread:%u \n", __FUNCTION__, getpid(), pthread_self());
 	gl2_encoder_context_t *ctx = (gl2_encoder_context_t *)self;
 	IOStream *stream = ctx->m_stream;
-
+        ALOGE("%s: will lock ctx:%p stream:%p pid:%d thread:%u \n", __FUNCTION__, ctx,
+              stream, getpid(), pthread_self());
+        stream->lock();
+        ALOGE("%s: locked pid:%d thread:%u \n", __FUNCTION__, getpid(), pthread_self());
 	const unsigned int __size_framebuffers =  (n * sizeof(GLuint));
-	 unsigned char *ptr;
-	 const size_t packetSize = 8 + 4 + __size_framebuffers + 1*4;
-	ptr = stream->alloc(packetSize);
+        unsigned char *ptr;
+        const size_t packetSize = 8 + 4 + __size_framebuffers + 1*4;
+        ptr = stream->alloc(packetSize);
 	int tmp = OP_glGenFramebuffers;memcpy(ptr, &tmp, 4); ptr += 4;
 	memcpy(ptr, &packetSize, 4);  ptr += 4;
 
 		memcpy(ptr, &n, 4); ptr += 4;
 	*(unsigned int *)(ptr) = __size_framebuffers; ptr += 4;
-	stream->readback(framebuffers, __size_framebuffers);
+	if (!stream->readback(framebuffers, __size_framebuffers)) {
+            ALOGE("%s 2: readback (%d bytes) failed\n", __FUNCTION__, __size_framebuffers);
+        } else {
+            ALOGE("%s: Dump:\n", __FUNCTION__);
+            int i;
+            for (i=0; i<n; i++) {
+                ALOGE("    fb[%d]:%d\n", i, framebuffers[i]);
+            }
+        }
+        stream->unlock();
+        ALOGE("%s: unlocked pid:%d thread:%u end", __FUNCTION__, getpid(), pthread_self());
 }
 
 void glGenRenderbuffers_enc(void *self , GLsizei n, GLuint* renderbuffers)

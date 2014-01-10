@@ -85,7 +85,7 @@ int TcpStream::connect(unsigned short port)
         ALOGE("TcpStream::connect() - socket() returns %d errno=%d\n", m_sock, errno);
         return -1;
     }
-    struct sockaddr_in addr;
+    struct sockaddr_in addr, addr_peer;
     socklen_t alen;
 
     memset(&addr, 0, sizeof(addr));
@@ -97,6 +97,15 @@ int TcpStream::connect(unsigned short port)
         ALOGE("TcpStream::connect() - connect() errno=%d\n", errno);
         return -1;
     }
+
+    memset(&addr, 0, sizeof(addr));
+    memset(&addr_peer, 0, sizeof(addr_peer));
+    alen = sizeof(addr);
+    getsockname(m_sock, (struct sockaddr *)&addr, &alen);
+    alen = sizeof(addr_peer);
+    getpeername(m_sock, (struct sockaddr *)&addr_peer, &alen);
+    ALOGE("%s: Process:%d Thread:%u connected through local ports %d to %d", __FUNCTION__,
+          getpid(), pthread_self(), ntohs(addr.sin_port), ntohs(addr_peer.sin_port));
 
 #ifdef _WIN32
     DWORD  flag;
