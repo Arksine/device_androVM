@@ -50,6 +50,7 @@ LOCAL_C_INCLUDES	:= $(KERNEL_HEADERS)       		  \
 			   bionic                  		  \
 			   external/stlport/stlport		  \
 			   external/protobuf/src		  \
+			   external/sqlite/dist           \
 			   device/androVM/common/system/genyd/lib \
 			   device/androVM/vbox86/libsensor
 
@@ -61,6 +62,7 @@ LOCAL_SHARED_LIBRARIES	:= libcutils	\
 			   libnetutils	\
 			   liblog	\
 			   libstlport	\
+			   libsqlite    \
 			   libgenyd
 
 LOCAL_STATIC_LIBRARIES  := libprotobuf-cpp-2.3.0-full
