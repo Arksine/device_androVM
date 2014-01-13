@@ -1,6 +1,6 @@
 #include "libgenyd.hpp"
 #define NO_PROTOBUF
-#include "global.hpp"
+#include "genymotion.hpp"
 
 #include <cutils/properties.h>
 
@@ -29,8 +29,6 @@ int LibGenyd::batteryCallback(const char *path, char *buff, size_t size)
         if (pos != std::string::npos && pos + begin->first.size() == haystack.size()) {
             // Retrieve value forced by callback
             int result = (this->*(begin->second))(buff, size);
-            //SLOGD("%s Battery callback: Overloading file %s with content = '%s'",
-            //      __FUNCTION__, path, buff);
             return result;
         }
         ++begin;
@@ -40,7 +38,7 @@ int LibGenyd::batteryCallback(const char *path, char *buff, size_t size)
 }
 
 // Static helper method that reads property key in a sane manner
-int readPropertyValue(const char *key, char *buff, size_t max_size)
+static int readPropertyValue(const char *key, char *buff, size_t max_size)
 {
     // Read property value
     char property[PROPERTY_VALUE_MAX];

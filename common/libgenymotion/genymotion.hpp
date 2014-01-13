@@ -1,5 +1,5 @@
-#ifndef GLOBAL_HPP_
-#define GLOBAL_HPP_
+#ifndef GENYMOTION_HPP_
+#define GENYMOTION_HPP_
 
 #ifndef LOG_TAG
 #define LOG_TAG "Genyd"

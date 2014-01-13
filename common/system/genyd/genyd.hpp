@@ -5,7 +5,7 @@
 
 #include <unistd.h>
 
-#include "global.hpp"
+#include "genymotion.hpp"
 #include "socket.hpp"
 #include "dispatcher.hpp"
 

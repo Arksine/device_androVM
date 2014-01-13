@@ -4,7 +4,7 @@
 #include <queue>
 #include <sstream>
 
-#include "global.hpp"
+#include "genymotion.hpp"
 
 #define BUFFER_SIZE 8192
 

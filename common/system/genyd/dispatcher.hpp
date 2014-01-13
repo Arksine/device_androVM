@@ -1,7 +1,7 @@
 #ifndef DISPATCHER_HPP_
 #define DISPATCHER_HPP_
 
-#include "global.hpp"
+#include "genymotion.hpp"
 
 class Genyd;
 

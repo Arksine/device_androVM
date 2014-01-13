@@ -1,5 +1,5 @@
 
-#include "global.hpp"
+#include "genymotion.hpp"
 #include "genyd.hpp"
 
 int main(int argc, char**argv)

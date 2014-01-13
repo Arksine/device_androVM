@@ -36,7 +36,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := local_gps.c
 
-LOCAL_C_INCLUDES += device/androVM/common/system/genyd
+LOCAL_C_INCLUDES += device/androVM/common/libgenymotion
 
 LOCAL_CFLAGS := -O2
 
