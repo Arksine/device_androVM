@@ -150,7 +150,7 @@ void Dispatcher::setAndroidId(const Request &request, Reply *reply, Genyd *genyd
 
     // Ensure ID is not too long
     if (androidId.length() != 16) {
-        SLOGE("setAndroidId: AndroidID should expects 16 chars but %d where found in %s", androidId.length(), androidId.c_str());
+        SLOGE("setAndroidId: AndroidID should expects 16 chars but %d were found in %s", androidId.length(), androidId.c_str());
         return buildErrorReply(Status::InvalidRequest, reply);
     }
 
