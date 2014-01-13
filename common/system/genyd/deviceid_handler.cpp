@@ -50,10 +50,11 @@ static void buildStringReply(Reply *reply, const std::string &strValue)
 }
 
 // Test if an AndroidID received char is valid
-static inline bool isAndroidIdValid(char c)
+static inline bool isAndroidIdValid(int c)
 {
-    return !(std::isalpha(c) || (c == ' ') || (c == '_') || (c == '-') || (c == '.'));
+    return !std::isxdigit(c);
 }
+
 
 // Callback fetched when a line have been found in SELECT sqlite requests
 static int sqlite_getcallback(void *data, int argc, char **argv, char **azColName)
@@ -67,17 +68,7 @@ static int sqlite_getcallback(void *data, int argc, char **argv, char **azColNam
     return 0;
 }
 
-static int sqlite_setcallback(void *NotUsed, int argc, char **argv, char **azColName)
-{
-    // TODO: remove this method
-    int i;
-    for(i=0; i<argc; i++){
-        SLOGD("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-    }
-    SLOGD("\n");
-    return 0;
-}
-
+// Execute an SQLite command, redirecting to the given callback on each result
 static int sqlite_exec(const char *cmd, sqlite3_callback callback)
 {
     const char dbpath[] = "/data/data/com.android.providers.settings/databases/settings.db";
@@ -133,8 +124,6 @@ void Dispatcher::setDeviceId(const Request &request, Reply *reply, Genyd* genyd)
 
 void Dispatcher::getAndroidId(const Request &request, Reply *reply, Genyd* genyd)
 {
-    SLOGE("Getting AndroidID");
-
     const char pattern[] = "SELECT value FROM secure WHERE name='android_id';";
 
     // Read value from database
@@ -158,8 +147,6 @@ void Dispatcher::setAndroidId(const Request &request, Reply *reply, Genyd* genyd
     // Read Device ID from request
     std::string androidId = request.parameter().value().stringvalue();
 
-    SLOGD("Setting AndroidID value to '%s'", androidId.c_str());
-
     // Ensure ID is not too long
     if ((sizeof(pattern) - 2 + androidId.length() + 1) > sizeof(cmd)) {
         SLOGE("setAndroidId: AndroidID is too long");
@@ -167,14 +154,16 @@ void Dispatcher::setAndroidId(const Request &request, Reply *reply, Genyd* genyd
     }
 
     // Ensure ID does not have invalid chars
-    if (!(std::find_if(androidId.begin(), androidId.end(), isAndroidIdValid) == androidId.end())) {
+    if (std::find_if(androidId.begin(), androidId.end(), isAndroidIdValid) != androidId.end()) {
         SLOGE("setAndroidId: AndroidID has invalid chars");
         return buildErrorReply(Status::InvalidRequest, reply);
     }
 
+    SLOGD("Setting AndroidID value to '%s'", androidId.c_str());
+
     // Save value in database
     snprintf(cmd, sizeof(cmd), pattern, androidId.c_str());
-    if (sqlite_exec(cmd, sqlite_setcallback)) {
+    if (sqlite_exec(cmd, NULL)) {
         return buildErrorReply(Status::GenericError, reply);
     }
 
