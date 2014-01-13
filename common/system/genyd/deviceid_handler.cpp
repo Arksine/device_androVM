@@ -148,14 +148,14 @@ void Dispatcher::setAndroidId(const Request &request, Reply *reply, Genyd* genyd
     std::string androidId = request.parameter().value().stringvalue();
 
     // Ensure ID is not too long
-    if ((sizeof(pattern) - 2 + androidId.length() + 1) > sizeof(cmd)) {
-        SLOGE("setAndroidId: AndroidID is too long");
+    if (androidId.length() != 16) {
+        SLOGE("setAndroidId: AndroidID should have 16 chars. Current size is invalid: %d", androidId.length());
         return buildErrorReply(Status::InvalidRequest, reply);
     }
 
     // Ensure ID does not have invalid chars
     if (std::find_if(androidId.begin(), androidId.end(), isAndroidIdValid) != androidId.end()) {
-        SLOGE("setAndroidId: AndroidID has invalid chars");
+        SLOGE("setAndroidId: AndroidID has invalid chars: '%s'", androidId.c_str());
         return buildErrorReply(Status::InvalidRequest, reply);
     }
 
