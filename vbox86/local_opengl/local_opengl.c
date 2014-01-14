@@ -50,15 +50,18 @@ int thread_skipping_bytes = 0;
 
 
 typedef struct _debug_infos_t {
+    int debug_enabled;
     int skip_bytes;
     int dump_reply;
+    int debug_all_commands;
 } debug_infos_t;
 
 static void analyse_data(char *buff, int towrite, int tovm, debug_infos_t *infos)
 {
     if (tovm) {
-        //SLOGE("Thread:%u: Reply (%d bytes)", pthread_self(), towrite);
-
+        if (infos->debug_all_commands) {
+            SLOGE("Thread:%u: Reply (%d bytes)", pthread_self(), towrite);
+        }
         if (infos->dump_reply) {
             SLOGE("Thread:%u: Dump reply to hexa:");
             int i;
@@ -91,7 +94,7 @@ static void analyse_data(char *buff, int towrite, int tovm, debug_infos_t *infos
         while (ptr && (datalen > 0)) {
             if (datalen < 8) {
                 SLOGE("Thread:%u: ERR partial data!! left:%d", pthread_self(), datalen);
-                // Need to bufferize data ?
+                // TODO: Need to bufferize data for next message
                 if (datalen >=4 )  {
                     memcpy(&opcode, ptr, 4);
                     ALOGE("Thread:%u: ERR got something that looks like:%d", pthread_self(), opcode);
@@ -111,8 +114,10 @@ static void analyse_data(char *buff, int towrite, int tovm, debug_infos_t *infos
                 infos->dump_reply = 1;
             };
 
-            /*SLOGE("Thread:%u: Command:%s Packetsize:%d (left:%d)",
-              pthread_self(), op_name, pcktsize, towrite - (ptr - buff));*/
+            if (infos->debug_all_commands) {
+                SLOGE("Thread:%u: Command:%s Packetsize:%d (left:%d)",
+                      pthread_self(), op_name, pcktsize, towrite - (ptr - buff));
+            }
             if (datalen < pcktsize) {
                 SLOGE("Thread:%u: ERR We got a problem Houston (datalen:%d but need %d)", pthread_self(),
                       datalen, pcktsize);
@@ -146,7 +151,11 @@ static int copy_socket(int fd_read, int fd_write, char *buff, int tovm, debug_in
         SLOGE("We are short on buffer");
     }
     towrite = rsize;
-    analyse_data(buff, towrite, tovm, infos);
+
+    // Debug commands and replies
+    if (infos->debug_enabled) {
+        analyse_data(buff, towrite, tovm, infos);
+    }
 
     while ((wsize=write(fd_write, buff, towrite))>0)
         towrite -= wsize;
@@ -165,6 +174,10 @@ static void *conn_thread(void *arg) {
     debug_infos_t infos;
     memset(&infos, 0, sizeof(infos));
 
+    //property_get();
+    infos.debug_enabled = 1;
+    infos.debug_all_commands = 1;
+
     char *buff;
     SLOGI("Connection thread created: %u %p", pthread_self(), getpid());
     struct sockaddr_in addr_peer, addr;
@@ -174,8 +187,10 @@ static void *conn_thread(void *arg) {
     socklen_t alen = sizeof(addr);
     getsockname(cd->host_socket, (struct sockaddr *)&addr, &alen);
     getpeername(cd->host_socket, (struct sockaddr *)&addr_peer, &alen);
-    SLOGI(" Host side port:%d, local_opengl port:%d",
-          ntohs(addr_peer.sin_port), ntohs(addr.sin_port));
+    if (infos.debug_enabled) {
+        SLOGI(" Host side port:%d, local_opengl port:%d",
+              ntohs(addr_peer.sin_port), ntohs(addr.sin_port));
+    }
 
     memset(&addr, 0, sizeof(addr));
     memset(&addr_peer, 0, sizeof(addr));
@@ -184,14 +199,17 @@ static void *conn_thread(void *arg) {
     getsockname(cd->local_socket, (struct sockaddr *)&addr, &alen);
     getpeername(cd->host_socket, (struct sockaddr *)&addr_peer, &alen);
 
-    SLOGI(" Local side local_opengl port:%d framework port:%d",
-          ntohs(addr.sin_port), ntohs(addr_peer.sin_port));
+    if (infos.debug_enabled) {
+        SLOGI(" Local side local_opengl port:%d framework port:%d",
+              ntohs(addr.sin_port), ntohs(addr_peer.sin_port));
+    }
 
     buff = (char *)malloc(BUFF_SIZE);
     if (!buff) {
         SLOGE("Thread %u: Unable to alloc %d bytes\n", pthread_self(), BUFF_SIZE);
         return NULL;
     }
+
 
     while (1) {
         fd_set set_read;
