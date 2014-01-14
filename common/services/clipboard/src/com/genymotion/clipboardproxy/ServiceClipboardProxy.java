@@ -19,10 +19,10 @@ public class ServiceClipboardProxy extends Service implements
         private static final int BUFFER_SIZE = 32768;
 	private static final int SERVERPORT = 22666;
 	private static final String SERVER_IP = "127.0.0.1";
-	private String myLabel;
-	private Socket socket;
-	private ClipboardManager clipboardManager;
-	private String clipboardText;
+	private String myLabel = "";
+	private Socket socket = null;
+	private ClipboardManager clipboardManager = null;
+	private String clipboardText = "";
 
 	@Override
 	public void onCreate() {
@@ -30,8 +30,6 @@ public class ServiceClipboardProxy extends Service implements
 
 		clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 		clipboardManager.addPrimaryClipChangedListener(this);
-
-		myLabel = getResources().getString(R.string.clip_description_label);
 	}
 
 	@Override
