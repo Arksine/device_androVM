@@ -9,36 +9,57 @@
 #include "socket.hpp"
 #include "dispatcher.hpp"
 
-class Genyd {
+#define SERVER_PORT 22666
+
+class Genyd
+{
 
 public:
-  Genyd(void);
-  ~Genyd(void);
+    Genyd(void);
+    ~Genyd(void);
 
 private:
-  Genyd(const Genyd &);
-  Genyd operator=(const Genyd &);
+    Genyd(const Genyd &);
+    Genyd operator=(const Genyd &);
 
 private:
-  Socket *server;
-  Dispatcher dispatcher;
-  std::map<int, Socket *> clients;
+    Socket *server;
+    Dispatcher dispatcher;
 
-  // Initialize fd_set for select() monitoring
-  int setFS(fd_set *readfs, fd_set *writefs) const;
+    // Clients list
+    std::map<int, Socket *> clients;
 
-  // Accept a new connection
-  void acceptNewClient(void);
+    // socket to the clipboardProxy service
+    // this socket is also present in the clients list
+    Socket *clipboardProxy;
 
-  // Handle Socket::read status for a given client
-  void treatMessage(Socket *client);
+    // Keep clipboard content
+    std::string clipboard;
+
+    // Initialize fd_set for select() monitoring
+    int setFS(fd_set *readfs, fd_set *writefs) const;
+
+    // Accept a new connection
+    void acceptNewClient(void);
+
+    // Handle Socket::read status for a given client
+    void treatMessage(Socket *client);
+
+    void sendHostClipboardToAndroid(const Request &request);
+    void sendAndroidClipboardToHost();
 
 public:
-  // Start server
-  void run(void);
+    // Start server
+    void run(void);
 
-  // Check if the server is well initialized
-  bool isInit(void) const;
+    // Check if the server is well initialized
+    bool isInit(void) const;
+
+    // Retreive the connection to the ClipboardService
+    Socket *getClipboardClient(void);
+
+    // Store the clipboard
+    void storeClipboard(const std::string &clipboard);
 
 };
 

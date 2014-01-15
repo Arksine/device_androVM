@@ -11,16 +11,25 @@ dalvik.vm.heapsize=256m
 persist.service.adb.enable=1
 ro.secure=0
 ro.opengles.version=131072
-ro.genymotion.version=2.0.2
 ro.bq.gpu_to_cpu_unsupported=1
+ro.genymotion.version=2.0.4
 
 #
 # Capabilities
 #
 
+# Battery sensor
 ro.genyd.caps.bat=on
+# GPS sensor
 ro.genyd.caps.gps=on
+# Accelerometer sensor
 ro.genyd.caps.acc=on
+# Webcam / camera sensor
 ro.genyd.caps.cam=on
+# Screencast / screenshot capability
 ro.genyd.caps.scr=on
+# Remote controller capability
 ro.genyd.caps.rmt=on
+# DeviceID / IMEI and AndroidID emulation
+ro.genyd.caps.did=on
+

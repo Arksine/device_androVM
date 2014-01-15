@@ -19,6 +19,8 @@ Dispatcher::Dispatcher(void)
     getCallbacks[Parameter::GpsBearing] = &Dispatcher::getGpsBearing;
     getCallbacks[Parameter::Accelerometer] = &Dispatcher::getAccelerometerValues;
     getCallbacks[Parameter::Capabilities] = &Dispatcher::getCapabilities;
+    getCallbacks[Parameter::DeviceId] = &Dispatcher::getDeviceId;
+    getCallbacks[Parameter::AndroidId] = &Dispatcher::getAndroidId;
 
     // "SetParam" callback list
     setCallbacks[Parameter::BatteryStatus] = &Dispatcher::setBatteryStatus;
@@ -31,53 +33,17 @@ Dispatcher::Dispatcher(void)
     setCallbacks[Parameter::GpsAccuracy] = &Dispatcher::setGpsAccuracy;
     setCallbacks[Parameter::GpsBearing] = &Dispatcher::setGpsBearing;
     setCallbacks[Parameter::Accelerometer] = &Dispatcher::setAccelerometerValues;
+    setCallbacks[Parameter::Clipboard] = &Dispatcher::setClipboard;
+    setCallbacks[Parameter::DeviceId] = &Dispatcher::setDeviceId;
+    setCallbacks[Parameter::AndroidId] = &Dispatcher::setAndroidId;
 }
 
 Dispatcher::~Dispatcher(void)
 {
+
 }
 
-void Dispatcher::treatPing(const Request &request, Reply *reply)
-{
-    (void)request;
-    SLOGD("Received Ping");
-
-    reply->set_type(Reply::Pong);
-    Status *status = reply->mutable_status();
-    status->set_code(Status::Ok);
-}
-
-void Dispatcher::getAndroidVersion(const Request &request, Reply *reply)
-{
-    SLOGD("Received Get AndroidVersion");
-
-    reply->set_type(Reply::Value);
-    Status *status = reply->mutable_status();
-    status->set_code(Status::Ok);
-    Value *value = reply->mutable_value();
-    value->set_type(Value::String);
-
-    char property[PROPERTY_VALUE_MAX];
-    property_get(ANDROID_VERSION, property, "Unknown");
-    value->set_stringvalue(property);
-}
-
-void Dispatcher::getGenymotionVersion(const Request &request, Reply *reply)
-{
-    SLOGD("Received Get GenymotionVersion");
-
-    reply->set_type(Reply::Value);
-    Status *status = reply->mutable_status();
-    status->set_code(Status::Ok);
-    Value *value = reply->mutable_value();
-    value->set_type(Value::String);
-
-    char property[PROPERTY_VALUE_MAX];
-    property_get(GENYMOTION_VERSION, property, "Unknown");
-    value->set_stringvalue(property);
-}
-
-void Dispatcher::treatGetParam(const Request &request, Reply *reply)
+void Dispatcher::treatGetParam(const Request &request, Reply *reply, Genyd *genyd)
 {
     if (!request.has_parameter()) {
         reply->set_type(Reply::Error);
@@ -93,7 +59,7 @@ void Dispatcher::treatGetParam(const Request &request, Reply *reply)
     std::map<int, Dispatcher::t_get_callback>::iterator func = getCallbacks.find(type);
 
     if (func != getCallbacks.end()) {
-        (this->*(func->second))(request, reply);
+        (this->*(func->second))(request, reply, genyd);
     } else {
         reply->set_type(Reply::Error);
         Status *status = reply->mutable_status();
@@ -101,7 +67,7 @@ void Dispatcher::treatGetParam(const Request &request, Reply *reply)
     }
 }
 
-void Dispatcher::treatSetParam(const Request &request, Reply *reply)
+void Dispatcher::treatSetParam(const Request &request, Reply *reply, Genyd *genyd)
 {
     if (!request.has_parameter()) {
         reply->set_type(Reply::Error);
@@ -125,7 +91,7 @@ void Dispatcher::treatSetParam(const Request &request, Reply *reply)
     std::map<int, Dispatcher::t_set_callback>::iterator func = setCallbacks.find(type);
 
     if (func != setCallbacks.end()) {
-        (this->*(func->second))(request, reply);
+        (this->*(func->second))(request, reply, genyd);
     } else {
         reply->set_type(Reply::Error);
         Status *status = reply->mutable_status();
@@ -133,7 +99,7 @@ void Dispatcher::treatSetParam(const Request &request, Reply *reply)
     }
 }
 
-void Dispatcher::treatCheckArchive(const Request &request, Reply *reply)
+void Dispatcher::treatCheckArchive(const Request &request, Reply *reply, Genyd *genyd)
 {
     if (!request.has_parameter()) {
         reply->set_type(Reply::Error);
@@ -151,10 +117,10 @@ void Dispatcher::treatCheckArchive(const Request &request, Reply *reply)
         return;
     }
 
-    checkArchive(request, reply);
+    checkArchive(request, reply, genyd);
 }
 
-void Dispatcher::treatFlashArchive(const Request &request, Reply *reply)
+void Dispatcher::treatFlashArchive(const Request &request, Reply *reply, Genyd *genyd)
 {
     if (!request.has_parameter()) {
         reply->set_type(Reply::Error);
@@ -172,42 +138,40 @@ void Dispatcher::treatFlashArchive(const Request &request, Reply *reply)
         return;
     }
 
-    flashArchive(request, reply);
+    flashArchive(request, reply, genyd);
 }
 
-void Dispatcher::unknownRequest(const Request &request, Reply *reply)
+void Dispatcher::unknownRequest(const Request &request, Reply *reply, Genyd *genyd)
 {
     SLOGD("Received unknown request");
-    (void)request;
+
     reply->set_type(Reply::Error);
     Status *status = reply->mutable_status();
     status->set_code(Status::InvalidRequest);
 }
 
-Reply *Dispatcher::dispatchRequest(const Request &request)
+Reply *Dispatcher::dispatchRequest(const Request &request, Genyd *genyd)
 {
-    (void)request;
-
     Reply *reply = new Reply();
 
     switch (request.type()) {
     case Request::Ping:
-        treatPing(request, reply);
+        treatPing(request, reply, genyd);
         break;
     case Request::SetParam:
-        treatSetParam(request, reply);
+        treatSetParam(request, reply, genyd);
         break;
     case Request::GetParam:
-        treatGetParam(request, reply);
+        treatGetParam(request, reply, genyd);
         break;
     case Request::CheckArchive:
-        treatCheckArchive(request, reply);
+        treatCheckArchive(request, reply, genyd);
         break;
     case Request::FlashArchive:
-        treatFlashArchive(request, reply);
+        treatFlashArchive(request, reply, genyd);
 	break;
     default:
-        unknownRequest(request, reply);
+        unknownRequest(request, reply, genyd);
         break;
     }
 
