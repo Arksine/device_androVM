@@ -22,8 +22,7 @@ LOCAL_SRC_FILES		:= main.cpp \
 
 LOCAL_MODULE		:= genyd
 
-LOCAL_C_INCLUDES	:= $(KERNEL_HEADERS) \
-			   bionic \
+LOCAL_C_INCLUDES	:= bionic \
 			   external/stlport/stlport \
 			   external/protobuf/src \
 			   device/androVM/common/libgenymotion	\
@@ -31,9 +30,10 @@ LOCAL_C_INCLUDES	:= $(KERNEL_HEADERS) \
 
 LOCAL_MODULE_TAGS	:= optional
 
-LOCAL_CFLAGS		:= -Werror=format
+LOCAL_CFLAGS		:= -Wall -O2
 
-LOCAL_SHARED_LIBRARIES	:= libnetutils
+LOCAL_SHARED_LIBRARIES	:= libnetutils \
+			   libsqlite \
 
 LOCAL_STATIC_LIBRARIES	:= libgenymotion \
 			   libstlport_static \
