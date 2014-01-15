@@ -26,7 +26,8 @@ LOCAL_C_INCLUDES	:= bionic \
 			   external/stlport/stlport \
 			   external/protobuf/src \
 			   device/androVM/common/libgenymotion	\
-			   device/androVM/vbox86/libsensor
+			   device/androVM/vbox86/libsensor \
+			   external/sqlite/dist
 
 LOCAL_MODULE_TAGS	:= optional
 
