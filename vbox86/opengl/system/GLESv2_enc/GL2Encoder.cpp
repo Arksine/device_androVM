@@ -1194,8 +1194,6 @@ void GL2Encoder::s_glTexParameteriv(void* self,
 void GL2Encoder::s_glTexImage2D(void* self, GLenum target, GLint level, GLint internalFormat, GLsizei width,
           GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid * data)
 {
-    ALOGE("glTexImage2 %dx%d", width, height);
-
     GL2Encoder* ctx = (GL2Encoder*)self;
 
     if (target == GL_TEXTURE_2D || target == GL_TEXTURE_EXTERNAL_OES) {
