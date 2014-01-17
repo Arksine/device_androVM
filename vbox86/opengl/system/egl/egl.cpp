@@ -901,7 +901,7 @@ EGLBoolean eglDestroyContext(EGLDisplay dpy, EGLContext ctx)
     if (getEGLThreadInfo()->currentContext == context)
     {
         // eglMakeCurrent(dpy, EGL_NO_CONTEXT, EGL_NO_SURFACE, EGL_NO_SURFACE);
-        ALOGE("egl: destroying current context refused\n");
+        LOGE("egl: destroying current context refused\n");
         return EGL_FALSE;
     }
 
