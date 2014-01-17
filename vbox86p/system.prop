@@ -16,7 +16,7 @@ ro.genyd.caps.gps=on
 # Accelerometer sensor
 ro.genyd.caps.acc=on
 # Webcam / camera sensor
-ro.genyd.caps.cam=on
+ro.genyd.caps.cam=off
 # Screencast / screenshot capability
 ro.genyd.caps.scr=on
 # Remote controller capability
