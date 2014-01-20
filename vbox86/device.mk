@@ -107,4 +107,6 @@ PRODUCT_PACKAGES += \
     gps.vbox86 \
     local_gps
 
+-include device/androVM/private/genymotion-private.mk
+
 $(call inherit-product-if-exists,frameworks/base/build/tablet-dalvik-heap.mk)
