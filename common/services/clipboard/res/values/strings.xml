@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string name="app_name">Clipboard Proxy</string>
-    <string name="clip_description_label">ClipDescriptionLabel</string>
-
-</resources>

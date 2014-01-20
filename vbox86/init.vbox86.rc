@@ -14,13 +14,6 @@ on boot
     setprop ro.radio.use-ppp no
     setprop ro.com.google.locationfeatures 1
 
-service genyd /system/bin/genyd
-    disabled
-    oneshot
-
-on boot
-    start genyd
-
 service dhcpcd_eth1 /system/bin/dhcpcd -ABKL
     class main
     disabled
