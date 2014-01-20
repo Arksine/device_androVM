@@ -7,17 +7,6 @@
 
 #include <cutils/log.h>
 
-#ifndef NO_PROTOBUF
-#include "device/androVM/common/system/genyd/requests.pb.h"
-
-using Genymotion::Parameter;
-using Genymotion::Request;
-using Genymotion::Status;
-using Genymotion::Reply;
-using Genymotion::Value;
-
-#endif
-
 #define LIBSENSOR_PORT (22471)
 #define LIBSENSOR_IP   "127.0.0.1"
 
