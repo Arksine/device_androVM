@@ -4,7 +4,7 @@
 
 #include "libgenyd.hpp"
 #define NO_PROTOBUF
-#include "global.hpp"
+#include "genymotion.hpp"
 
 // Singleton object
 LibGenyd LibGenyd::instance = LibGenyd();

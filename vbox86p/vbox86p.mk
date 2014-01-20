@@ -28,7 +28,6 @@ PRODUCT_PACKAGES += libGLESv1_enc \
         androVM_setprop \
         busybox \
         miniunzip \
-        genyd \
         gps.vbox86 \
         local_gps \
         sensors.vbox86 \
@@ -60,7 +59,6 @@ PRODUCT_COPY_FILES += \
     frameworks/base/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
     frameworks/base/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
     device/androVM/common/scripts/check-archive.sh:system/bin/check-archive.sh \
-    device/androVM/common/scripts/flash-archive.sh:system/bin/flash-archive.sh \
-#    frameworks/base/data/etc/android.hardware.camera.xml:system/etc/permissions/android.hardware.camera.xml \
+    device/androVM/common/scripts/flash-archive.sh:system/bin/flash-archive.sh
 
-
+-include device/androVM/private/genymotion-private.mk
