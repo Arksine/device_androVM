@@ -18,6 +18,7 @@
 <resources>
     <string-array name="extra_wallpapers" translatable="false">
         <!--    Genymotion    -->
+        <item>flocon</item>
         <item>noel</item>
         <item>movember</item>
         <item>mosaique</item>
