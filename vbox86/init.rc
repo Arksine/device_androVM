@@ -139,6 +139,14 @@ loglevel 3
     mkdir /dev/fscklogs 0770 root system
 
 on post-fs
+    # load vbox modules
+    insmod /system/lib/vboxguest.ko
+    insmod /system/lib/vboxsf.ko
+    insmod /system/lib/vboxvideo.ko
+    chown system system /dev/vboxguest
+    # Mount Virtualbox shared folders
+    exec /system/bin/androVM-vbox-sf /mnt/shared
+
     # once everything is setup, no need to modify /
     mount rootfs rootfs / ro remount
     # mount shared so changes propagate into child namespaces
