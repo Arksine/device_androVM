@@ -25,7 +25,6 @@ PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=eth1
 
 PRODUCT_AAPT_CONFIG := normal ldpi mdpi hdpi xhdpi xxhdpi
-#PRODUCT_AAPT_PREF_CONFIG := hdpi
 
 LOCAL_KERNEL := device/androVM/vbox86/kernel-vbox86
 
@@ -69,18 +68,6 @@ PRODUCT_COPY_FILES := \
     device/androVM/common/scripts/check-archive.sh:system/bin/check-archive.sh \
     device/androVM/common/scripts/flash-archive.sh:system/bin/flash-archive.sh \
     device/androVM/vbox86/installed_su_daemon:/system/etc/.installed_su_daemon \
-    #device/androVM/common/google/com.google.android.maps.jar:system/framework/com.google.android.maps.jar \
-    #device/androVM/common/google/com.google.android.maps.xml:system/etc/permissions/com.google.android.maps.xml \
-    #device/androVM/common/google/com.android.location.provider.jar:system/framework/com.android.location.provider.jar \
-    #device/androVM/common/google/com.android.location.provider.xml:system/etc/permissions/com.android.location.provider.xml \
-    #device/androVM/common/libhoudini/libhoudini.so:system/lib/libhoudini.so \
-    #device/androVM/common/libhoudini/libdvm_houdini.so:system/lib/libdvm_houdini.so \
-    
-
-
-#arm_files := $(call all-files-under,device/androVM/common/libhoudini/arm)
-#arm_files := check.xml libandroid_runtime.so libandroid.so libbinder.so libcamera_client.so libc_orig.so libcrypto.so libc.so libcutils.so libdl.so libEGL.so libemoji.so libETC1.so libexpat.so libgcomm_jni.so libGLESv1_CM.so libGLESv2.so libgui.so libhardware_legacy.so libhardware.so libicui18n.so libicuuc.so libjnigraphics.so libjpeg.so liblog.so libmedia.so libm.so libnativehelper.so libnetutils.so libnfc_ndef.so libOpenSLES.so libpixelflinger.so libskiagl.so libskia.so libsonivox.so libsqlite.so libssl.so libstdc++.so libtalk_jni.so libui.so libutils.so libvoicesearch.so libwpa_client.so libz.so linker
-#PRODUCT_COPY_FILES += $(foreach arm_file,$(arm_files), device/androVM/common/libhoudini/arm/$(arm_file):system/lib/arm/$(arm_file))
 
 PRODUCT_PACKAGES += \
     audio.primary.vbox86 \
@@ -116,7 +103,6 @@ PRODUCT_PACKAGES += \
     make_ext4fs \
     Superuser \
     busybox \
-    genyd \
     gps.vbox86 \
     local_gps \
     libGLESv1_CM_genymotion \
@@ -128,5 +114,6 @@ PRODUCT_PACKAGES += \
     libGM_GLESv1_enc \
     gralloc.vbox86 \
 
+-include device/androVM/private/genymotion-private.mk
 
 $(call inherit-product-if-exists,frameworks/base/build/tablet-dalvik-heap.mk)
