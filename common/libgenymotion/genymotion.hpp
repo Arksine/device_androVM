@@ -1,22 +1,11 @@
-#ifndef GLOBAL_HPP_
-#define GLOBAL_HPP_
+#ifndef GENYMOTION_HPP_
+#define GENYMOTION_HPP_
 
 #ifndef LOG_TAG
 #define LOG_TAG "Genyd"
 #endif
 
 #include <cutils/log.h>
-
-#ifndef NO_PROTOBUF
-#include "device/androVM/common/system/genyd/requests.pb.h"
-
-using Genymotion::Parameter;
-using Genymotion::Request;
-using Genymotion::Status;
-using Genymotion::Reply;
-using Genymotion::Value;
-
-#endif
 
 #define LIBSENSOR_PORT (22471)
 #define LIBSENSOR_IP   "127.0.0.1"
