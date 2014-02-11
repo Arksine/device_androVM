@@ -33,7 +33,6 @@ PRODUCT_PACKAGES += libGLESv1_enc \
         sensors.vbox86 \
         v86d \
         vmconfig \
-	ClipboardProxy
 
 LOCAL_KERNEL := device/androVM/vbox86/kernel-vbox86
 
