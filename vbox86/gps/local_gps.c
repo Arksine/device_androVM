@@ -15,8 +15,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#define NO_PROTOBUF
-#include "global.hpp"
+#include "genymotion.hpp"
 
 #include "gps.h"
 

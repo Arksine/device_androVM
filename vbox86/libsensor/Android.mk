@@ -22,7 +22,7 @@ LOCAL_CFLAGS		:= -DLOG_TAG=\"Sensors\" -lpthread -ldl -O2
 
 LOCAL_C_INCLUDES	:= bionic \
 			   external/stlport/stlport \
-			   device/androVM/common/system/genyd
+			   device/androVM/common/libgenymotion
 
 LOCAL_SRC_FILES		:= geny_sensors.cpp		\
 			   sensor.cpp			\

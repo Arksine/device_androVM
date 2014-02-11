@@ -1,9 +1,6 @@
 on init
    export HWACCEL 1
 
-on boot
-    start genyd
-
 service vbox86-setup /system/etc/init.androVM.sh
     oneshot
     class very-first
@@ -11,10 +8,6 @@ service vbox86-setup /system/etc/init.androVM.sh
 service local_opengl /system/bin/local_opengl
 
 service vinput /system/bin/vinput
-
-service genyd /system/bin/genyd
-    disabled
-    oneshot
 
 service dhcpcd_eth1 /system/bin/dhcpcd -ABKL
     disabled
