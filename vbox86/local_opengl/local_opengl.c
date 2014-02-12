@@ -110,9 +110,9 @@ static void analyse_data(char *buff, int towrite, int tovm, debug_infos_t *infos
             }
             memcpy(&pcktsize, ptr + 4, 4);
 
-            if (opcode == 2099 /* glGenFramebuffers */) {
-                infos->dump_reply = 1;
-            };
+            //if (opcode == 2099 /* glGenFramebuffers */) {
+            //    infos->dump_reply = 1;
+            //};
 
             if (infos->debug_all_commands) {
                 SLOGE("Thread:%u: Command:%s Packetsize:%d (left:%d)",
@@ -174,9 +174,13 @@ static void *conn_thread(void *arg) {
     debug_infos_t infos;
     memset(&infos, 0, sizeof(infos));
 
-    //property_get();
-    infos.debug_enabled = 1;
-    infos.debug_all_commands = 1;
+    char prop[PROPERTY_VALUE_MAX];
+    if (property_get("local_opengl.debug", prop, NULL) > 0) {
+        infos.debug_enabled = 1;
+    }
+    if (property_get("local_opengl.debug_all_cmds", prop, NULL) > 0) {
+        infos.debug_all_commands = 1;
+    }
 
     char *buff;
     SLOGI("Connection thread created: %u %p", pthread_self(), getpid());
