@@ -35,7 +35,7 @@ void Dispatcher::setDefaultBatteryStatus(void) const {
     LibGenyd::setAcOnlineFromStatus(status);
 }
 
-void Dispatcher::setBatteryStatus(const Request &request, Reply *reply)
+void Dispatcher::setBatteryStatus(const Request &request, Reply *reply, Genyd *genyd)
 {
     std::string battery_status = request.parameter().value().stringvalue();
 
@@ -83,7 +83,7 @@ void Dispatcher::setBatteryStatus(const Request &request, Reply *reply)
     }
 }
 
-void Dispatcher::getBatteryStatus(const Request &request, Reply *reply)
+void Dispatcher::getBatteryStatus(const Request &request, Reply *reply, Genyd *genyd)
 {
     // Prepare response
     reply->set_type(Reply::Value);
@@ -104,7 +104,7 @@ void Dispatcher::getBatteryStatus(const Request &request, Reply *reply)
     value->set_stringvalue(battery_status);
 }
 
-void Dispatcher::setBatteryLevel(const Request &request, Reply *reply)
+void Dispatcher::setBatteryLevel(const Request &request, Reply *reply, Genyd *genyd)
 {
     int batlevel = request.parameter().value().intvalue();
 
@@ -159,7 +159,7 @@ void Dispatcher::setBatteryLevel(const Request &request, Reply *reply)
     }
 }
 
-void Dispatcher::getBatteryLevel(const Request &request, Reply *reply)
+void Dispatcher::getBatteryLevel(const Request &request, Reply *reply, Genyd *genyd)
 {
     char full[PROPERTY_VALUE_MAX];
     char level[PROPERTY_VALUE_MAX];
@@ -191,7 +191,7 @@ void Dispatcher::getBatteryLevel(const Request &request, Reply *reply)
     value->set_intvalue(batlevel);
 }
 
-void Dispatcher::setBatteryMode(const Request &request, Reply *reply) {
+void Dispatcher::setBatteryMode(const Request &request, Reply *reply, Genyd *genyd) {
 
     bool automode = !request.parameter().value().boolvalue();
 
@@ -214,7 +214,7 @@ void Dispatcher::setBatteryMode(const Request &request, Reply *reply) {
     }
 }
 
-void Dispatcher::isBatteryManual(const Request &request, Reply *reply)
+void Dispatcher::isBatteryManual(const Request &request, Reply *reply, Genyd *genyd)
 {
     // Prepare response
     reply->set_type(Reply::Value);

@@ -57,9 +57,11 @@ LOCAL_SRC_FILES		:= main.cpp				\
 			   dispatcher.cpp			\
 			   gps_handler.cpp                      \
 			   battery_handler.cpp			\
+			   generic_handler.cpp			\
 			   capabilities_handler.cpp		\
 			   accelerometer_handler.cpp		\
 			   archive_flash_handler.cpp            \
+			   deviceid_handler.cpp	                \
 		           $(call all-proto-files-under, .)
 
 LOCAL_MODULE		:= genyd
@@ -68,6 +70,7 @@ LOCAL_C_INCLUDES	:= $(KERNEL_HEADERS)       		  \
 			   bionic                  		  \
 			   external/stlport/stlport		  \
 			   external/protobuf/src		  \
+			   external/sqlite/dist           \
 			   device/androVM/common/system/genyd/lib \
 			   device/androVM/vbox86/libsensor
 
@@ -79,6 +82,7 @@ LOCAL_SHARED_LIBRARIES	:= libcutils	\
 			   libnetutils	\
 			   liblog	\
 			   libstlport	\
+			   libsqlite    \
 			   libgenyd
 
 LOCAL_PROTOC_OPTIMIZE_TYPE := full

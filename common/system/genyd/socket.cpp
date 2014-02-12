@@ -5,8 +5,8 @@
 
 #include "socket.hpp"
 
-Socket::Socket(int socket)
-    : socket(socket)
+Socket::Socket(int socket) :
+    socket(socket)
 {
 
 }
@@ -22,9 +22,9 @@ Socket::ReadStatus Socket::read(void)
 {
     int len = 0;
     char *cmd = 0;
-    char buffer[1024];
+    char buffer[BUFFER_SIZE];
 
-    if ((len = recv(socket, buffer, 1023, MSG_NOSIGNAL)) < 0) {
+    if ((len = ::recv(socket, buffer, BUFFER_SIZE, MSG_NOSIGNAL)) < 0) {
         SLOGE("recv() error");
         return Socket::ReadError;
     }
@@ -35,19 +35,79 @@ Socket::ReadStatus Socket::read(void)
 
     istream.write(buffer, len);
 
+    // Handle big requests
+    while (len == BUFFER_SIZE) {
+        if ((len = ::recv(socket, buffer, BUFFER_SIZE, MSG_NOSIGNAL | MSG_DONTWAIT)) > 0) {
+            istream.write(buffer, len);
+        }
+    }
+
     // Try to parse the current stream
-    // On success, stream is consumed
     if (request.ParseFromIstream(&istream)) {
+        // On success, clear stream
+        istream.str("");
+        istream.clear();
         return Socket::NewMessage;
     } else {
-        SLOGE("Can't parse request");
+        // On error, reset error flag and gpointer
+        istream.clear();
+        istream.seekg(0);
+        // Partial reply
+        SLOGW("Can't parse request");
         return Socket::UnknownMessage;
     }
+}
+
+// Read data from socket
+Socket::ReadStatus Socket::read(std::string *data)
+{
+    int len = 0;
+    char *cmd = 0;
+    char buffer[BUFFER_SIZE];
+
+    if ((len = ::recv(socket, buffer, BUFFER_SIZE, MSG_NOSIGNAL)) < 0) {
+        SLOGE("recv() error");
+        return Socket::ReadError;
+    }
+
+    if (len == 0) {
+        return Socket::NoMessage;
+    }
+
+    data->append(buffer, len);
+
+    // Handle big requests
+    while (len == BUFFER_SIZE) {
+        if ((len = ::recv(socket, buffer, BUFFER_SIZE, MSG_NOSIGNAL | MSG_DONTWAIT)) > 0) {
+            data->append(buffer, len);
+        }
+    }
+
+    return Socket::NewMessage;
+}
+
+// Write data to the socket
+Socket::WriteStatus Socket::write(const char *buf, int size)
+{
+    int len = 0;
+    char *cmd = 0;
+
+    if ((len = ::send(socket, buf, size, MSG_NOSIGNAL)) < 0) {
+        SLOGE("send() error");
+        return Socket::WriteError;
+    }
+
+    return Socket::WriteSuccess;
 }
 
 bool Socket::hasReplies(void) const
 {
     return replies.size();
+}
+
+bool Socket::hasRequests(void) const
+{
+    return requests.size();
 }
 
 Socket::WriteStatus Socket::reply(void)
@@ -63,12 +123,36 @@ Socket::WriteStatus Socket::reply(void)
         delete reply;
         return Socket::BadSerialize;
     }
-    if ((len = send(socket, data.c_str(), data.size(), MSG_NOSIGNAL)) < 0) {
+    if ((len = ::send(socket, data.c_str(), data.size(), MSG_NOSIGNAL)) < 0) {
         SLOGE("Can't send reply");
         delete reply;
         return Socket::WriteError;
     }
+
     delete reply;
+    return Socket::WriteSuccess;
+}
+
+Socket::WriteStatus Socket::ask(void)
+{
+    std::string data;
+    int len = 0;
+
+    Request *request = requests.front();
+    requests.pop();
+
+    if (!request->SerializeToString(&data)) {
+        SLOGE("Can't serialize request");
+        delete request;
+        return Socket::BadSerialize;
+    }
+    if ((len = ::send(socket, data.c_str(), data.size(), MSG_NOSIGNAL)) < 0) {
+        SLOGE("Can't send request");
+        delete request;
+        return Socket::WriteError;
+    }
+
+    delete request;
     return Socket::WriteSuccess;
 }
 
@@ -85,4 +169,10 @@ const Request &Socket::getRequest(void) const
 void Socket::addReply(Reply *reply)
 {
     replies.push(reply);
+}
+
+
+void Socket::addRequest(Request *request)
+{
+    requests.push(request);
 }
