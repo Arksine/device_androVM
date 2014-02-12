@@ -75,7 +75,7 @@ install_arm_lib() {
     echo "[install_arm_lib] No x86 version of $FILE making link.";
     NEW_FILE=${SO_DEST_DIR}/$(basename "$FILE")
     LINK=${INSTALL_DIR}/${FILE}
-    # Create a link in standard dir to /arm/ lib 
+    # Create a link in standard dir to /arm/ lib
     if ! ln -s "$NEW_FILE" "$LINK"; then
       echo "[ERROR][install_arm_lib] ln failed : $NEW_FILE $LINK"
     fi
@@ -134,6 +134,7 @@ install_all_files() {
 
 exit_on_error() {
   echo "$1" >&2
+  log -p e -t "flash_archive" "$1"
   exit 1
 }
 
@@ -174,6 +175,14 @@ flash_archive() {
 # main #
 ########
 {
+  # check root access
+
+  id | grep root
+  if [ $? -ne 0 ]
+  then
+    exit_on_error "`basename $0` must be run as root"
+  fi
+
   # Check if args are ok
   if [ $# -ne 1 ]
   then
@@ -191,7 +200,7 @@ flash_archive() {
       exit_on_error "Sorry $ZIPFILE doesn't seem to be a zip archive"
   esac
 
-  # Change umask for the whole process 
+  # Change umask for the whole process
   UMASK=`umask`
   if ! umask 022; then
     echo "[ERROR][main] umask failed !"
