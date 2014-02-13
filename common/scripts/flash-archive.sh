@@ -19,7 +19,16 @@ ARM_E_MACHINE="28"
 _log_message() {
     echo "$1"
     log -t "$PROGNAME" "$1"
-    return 0
+}
+
+_exit_success() {
+    echo "{Result:OK};"
+    exit 0
+}
+
+_exit_failure() {
+    echo "{Result:KO};"
+    exit 1
 }
 
 # mkdir_and_copy_file <file> <copy.path>
@@ -141,7 +150,7 @@ install_all_files() {
 exit_on_error() {
     echo "$1" >&2
     log -p e -t "flash_archive" "$1"
-    exit 1
+    _exit_failure 1
 }
 
 ##########
@@ -209,7 +218,7 @@ fi
     UMASK=`umask`
     if ! umask 022; then
         _log_message "[ERROR][main] umask failed !"
-        exit 1664
+        _exit_failure 1664
     fi
 
     # launching flash mechanics
@@ -220,6 +229,6 @@ fi
         _log_message "[ERROR][flash_archive] unable to revert to umask $UMASK."
     fi
 
-    exit 0
+    _exit_success
 }
 
