@@ -11,12 +11,22 @@ _log_message() {
     log -t "$PROGNAME" "$1"
 }
 
+_exit_success() {
+    echo "{Result:OK};"
+    exit 0
+}
+
+_exit_failure() {
+    echo "{Result:KO};"
+    exit 1
+}
+
 # check root access
 id | grep root
 if [ $? -ne 0 ]
 then
     _log_message "`basename $0` must be run as root"
-    exit 1
+    _exit_failure
 fi
 
 ########
@@ -27,7 +37,7 @@ fi
     if [ $# -ne 1 ]
     then
         _log_message "Usage: $PROGNAME <archive-to-check.zip>"
-        exit 1
+        _exit_failure
     fi
 
     ZIPFILE=$1
@@ -39,7 +49,7 @@ fi
             ;;
         *)
             _log_message "Sorry "$ZIPFILE" doesn't seem to be a zip archive"
-            exit 1
+            _exit_failure
     esac
 
     # Checking zip content
@@ -48,10 +58,10 @@ fi
     then
     # We found a system/ directory
         _log_message "[$PROGNAME] system/ found in $ZIPFILE; return 0"
-        exit 0 # OK code
+        _exit_success # OK code
     else
     # No system/ directory found, should not flash it
         _log_message "[$PROGNAME] system/ NOT found in $ZIPFILE; return 1"
-        exit 1 # error code
+        _exit_failure # error code
     fi
 }
