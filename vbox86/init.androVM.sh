@@ -77,7 +77,7 @@ fi
 
 prop_su_bypass=`/system/bin/androVM-prop get su_bypass`
 if [ $prop_su_bypass ]; then
-  setprop androVM.su.bypass 1
+  setprop genyd.su.bypass 1
 fi
 
 # Setting Device Id system properties from VirtualBox properties
