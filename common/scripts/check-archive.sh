@@ -21,14 +21,6 @@ _exit_failure() {
     exit 1
 }
 
-# check root access
-id | grep root
-if [ $? -ne 0 ]
-then
-    _log_message "`basename $0` must be run as root"
-    _exit_failure
-fi
-
 ########
 # main #
 ########
