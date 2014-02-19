@@ -76,8 +76,10 @@ install_arm_lib() {
     # Build the library install path
     SO_DEST_DIR=${INSTALL_DIR}/$(dirname "$FILE")/${ARM_SO_SUB_DIR}
     # Create the library install directory
-    if ! mkdir "$SO_DEST_DIR"; then
-        exit_on_error "[ERROR][install_arm_lib] mkdir failed : $SO_DEST_DIR"
+    if ! stat "$SO_DEST_DIR"; then
+        if ! mkdir "$SO_DEST_DIR"; then
+            exit_on_error "[ERROR][install_arm_lib] mkdir failed : $SO_DEST_DIR"
+        fi
     fi
     # Copy the library in the newly created dir
     if ! cp "$FILE" "$SO_DEST_DIR"; then
