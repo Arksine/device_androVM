@@ -7,6 +7,8 @@
 TMP_DIR="/data/local/tmp/flash-tmp-dir/"
 INSTALL_DIR="/"
 ARM_SO_SUB_DIR="/arm/"
+RECOVERY_DIR="/data/.genymotion"
+RECOVERY_FILE="/data/.genymotion/recovery"
 
 # Value for e_machine field in elf header for ARM
 # http://en.wikipedia.org/wiki/Executable_and_Linkable_Format#File_header
@@ -186,6 +188,23 @@ flash_archive() {
     _log_message "[flash_archive] Done successfully !"
 }
 
+
+# recovery_file <file>
+recovery_file() {
+   FILE=$1
+   NEW_FILE=${RECOVERY_DIR}/$(basename "$FILE")
+   mkdir -p $RECOVERY_DIR
+ 
+   # Remove previous file if exists
+   [ -e "$NEW_FILE" ] && rm $NEW_FILE
+   # Copy file
+   if ! cp "$FILE" "$NEW_FILE"; then
+     _log_message "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
+   fi
+   
+   echo $(basename "$FILE") >> $RECOVERY_FILE
+}
+
 # check root access
 id | grep root
 if [ $? -ne 0 ]
@@ -203,8 +222,16 @@ fi
         exit_on_error "Usage: `basename $0` <archive-to-flash.zip>"
     fi
 
-    ZIPFILE=$1
-
+    recovery=0
+    ZIPFILE=
+    
+    case $1 in
+      -r | --recovery )       recovery=1
+                              ;;
+      * )                     ZIPFILE=$1
+                              ;;
+    esac
+    
     # Check if argument is an .zip archive
     case "$ZIPFILE" in
         *.zip)
@@ -227,6 +254,10 @@ fi
     # Restore umask
     if ! umask $UMASK; then
         _log_message "[ERROR][flash_archive] unable to revert to umask $UMASK."
+    fi
+    
+    if [ "$recovery" = "0" ]; then
+	recovery_file $ZIPFILE
     fi
 
     _exit_success
