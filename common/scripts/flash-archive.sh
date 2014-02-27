@@ -222,16 +222,8 @@ fi
         exit_on_error "Usage: `basename $0` <archive-to-flash.zip>"
     fi
 
-    recovery=0
-    ZIPFILE=
-    
-    case $1 in
-      -r | --recovery )       recovery=1
-                              ;;
-      * )                     ZIPFILE=$1
-                              ;;
-    esac
-    
+    ZIPFILE=$1
+
     # Check if argument is an .zip archive
     case "$ZIPFILE" in
         *.zip)
@@ -255,10 +247,8 @@ fi
     if ! umask $UMASK; then
         _log_message "[ERROR][flash_archive] unable to revert to umask $UMASK."
     fi
-    
-    if [ "$recovery" = "0" ]; then
+
 	recovery_file $ZIPFILE
-    fi
 
     _exit_success
 }
