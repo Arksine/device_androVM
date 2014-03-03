@@ -27,6 +27,6 @@ PRODUCT_MODEL := Genymotion ('Phone' version)
 
 PRODUCT_COPY_FILES += \
     device/androVM/vbox86/vold.fstab:system/etc/vold.fstab \
-    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
+    device/androVM/vbox86/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.telephony.gsm.xml:system/etc/permissions/android.hardware.telephony.gsm.xml \
 

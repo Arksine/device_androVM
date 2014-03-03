@@ -31,6 +31,6 @@ PRODUCT_MODEL := Genymotion ('Tablet' version)
 
 PRODUCT_COPY_FILES += \
     device/androVM/vbox86/vold.fstab:system/etc/vold.fstab \
-    frameworks/native/data/etc/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
+    device/androVM/vbox86/tablet_core_hardware.xml:system/etc/permissions/tablet_core_hardware.xml \
 
 
