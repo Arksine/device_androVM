@@ -159,9 +159,8 @@ exit_on_error() {
 # SCRIPT #
 ##########
 flash_archive() {
-  # Retrieve params
+    # Retrieve params
     ARCHIVE=$1
-
 
     _log_message "[flash_archive] Creating tmp dir"
     create_tmp_dir
@@ -195,9 +194,9 @@ recovery_file() {
     NEW_FILE=${RECOVERY_DIR}/$(basename "$FILE")
     mkdir -p $RECOVERY_DIR
 
-   # Remove previous file if exists
+    # Remove previous file if exists
     [ -e "$NEW_FILE" ] && rm $NEW_FILE
-   # Copy file
+    # Copy file
     if ! cp "$FILE" "$NEW_FILE"; then
         _log_message "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
     fi
