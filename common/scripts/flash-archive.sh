@@ -190,18 +190,21 @@ flash_archive() {
 
 # recovery_file <file>
 recovery_file() {
-    FILE=$1
+    FILE="$1"
     NEW_FILE=${RECOVERY_DIR}/$(basename "$FILE")
-    mkdir -p $RECOVERY_DIR
+    mkdir -p "$RECOVERY_DIR"
 
     # Remove previous file if exists
-    [ -e "$NEW_FILE" ] && rm $NEW_FILE
+    [ -e "$NEW_FILE" ] && rm "$NEW_FILE"
+
     # Copy file
     if ! cp "$FILE" "$NEW_FILE"; then
         _log_message "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
+        return 1
+    else
+        echo $(basename "$FILE") >> "$RECOVERY_FILE"
+        return 0
     fi
-
-    echo $(basename "$FILE") >> $RECOVERY_FILE
 }
 
 # check root access
@@ -221,7 +224,7 @@ fi
         exit_on_error "Usage: `basename $0` <archive-to-flash.zip>"
     fi
 
-    ZIPFILE=$1
+    ZIPFILE="$1"
 
     # Check if argument is an .zip archive
     case "$ZIPFILE" in
