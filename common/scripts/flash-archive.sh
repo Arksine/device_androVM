@@ -191,18 +191,18 @@ flash_archive() {
 
 # recovery_file <file>
 recovery_file() {
-   FILE=$1
-   NEW_FILE=${RECOVERY_DIR}/$(basename "$FILE")
-   mkdir -p $RECOVERY_DIR
- 
+    FILE=$1
+    NEW_FILE=${RECOVERY_DIR}/$(basename "$FILE")
+    mkdir -p $RECOVERY_DIR
+
    # Remove previous file if exists
-   [ -e "$NEW_FILE" ] && rm $NEW_FILE
+    [ -e "$NEW_FILE" ] && rm $NEW_FILE
    # Copy file
-   if ! cp "$FILE" "$NEW_FILE"; then
-     _log_message "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
-   fi
-   
-   echo $(basename "$FILE") >> $RECOVERY_FILE
+    if ! cp "$FILE" "$NEW_FILE"; then
+        _log_message "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
+    fi
+
+    echo $(basename "$FILE") >> $RECOVERY_FILE
 }
 
 # check root access
@@ -248,7 +248,7 @@ fi
         _log_message "[ERROR][flash_archive] unable to revert to umask $UMASK."
     fi
 
-	recovery_file $ZIPFILE
+    recovery_file $ZIPFILE
 
     _exit_success
 }
