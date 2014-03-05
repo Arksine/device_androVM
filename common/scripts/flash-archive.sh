@@ -39,7 +39,7 @@ mkdir_and_copy_file() {
     NEW_FILE=${DIR}/${FILE}
     # Construct and build dir
     DIR_TO_MKDIR=$(dirname "$NEW_FILE")
-    mkdir $DIR_TO_MKDIR
+    mkdir -p $DIR_TO_MKDIR
 
     if [ ! -d "$FILE" ] # is NOT a directory
     then
@@ -76,10 +76,8 @@ install_arm_lib() {
     # Build the library install path
     SO_DEST_DIR=${INSTALL_DIR}/$(dirname "$FILE")/${ARM_SO_SUB_DIR}
     # Create the library install directory
-    if ! stat "$SO_DEST_DIR"; then
-        if ! mkdir "$SO_DEST_DIR"; then
-            exit_on_error "[ERROR][install_arm_lib] mkdir failed : $SO_DEST_DIR"
-        fi
+    if ! mkdir -p "$SO_DEST_DIR"; then
+        exit_on_error "[ERROR][install_arm_lib] mkdir failed : $SO_DEST_DIR"
     fi
     # Copy the library in the newly created dir
     if ! cp "$FILE" "$SO_DEST_DIR"; then
@@ -119,7 +117,7 @@ delete_tmp_dir() {
 create_tmp_dir() {
     # Remove previous version if exist
     delete_tmp_dir
-    if ! mkdir "$TMP_DIR"; then
+    if ! mkdir -p "$TMP_DIR"; then
         exit_on_error "[ERROR][create_tmp_dir] mkdir failed : $TMP_DIR"
     fi
 }
