@@ -26,10 +26,10 @@
     <feature name="android.hardware.camera" />
     <feature name="android.hardware.location" />
     <feature name="android.hardware.location.network" />
-    <feature name="android.hardware.sensor.compass" />
     <feature name="android.hardware.sensor.accelerometer" />
     <!-- disabled because not available -->
     <!-- Revert the whole commit when it will be available -->
+    <!-- <feature name="android.hardware.sensor.compass" /> -->
     <!-- <feature name="android.hardware.bluetooth" /> -->
     <feature name="android.hardware.touchscreen" />
     <feature name="android.hardware.microphone" />
