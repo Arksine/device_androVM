@@ -113,6 +113,9 @@ PRODUCT_PACKAGES += \
     libGLESv2_genymotion \
     libGM_GLESv1_enc \
     gralloc.vbox86 \
+    libFFmpegExtractor \
+    libstagefright_soft_ffmpegadec \
+    libstagefright_soft_ffmpegvdec \
 
 -include device/androVM/private/genymotion-private.mk
 
