@@ -33,6 +33,12 @@ _exit_failure() {
     exit 1
 }
 
+exit_on_error() {
+    echo "$1" >&2
+    log -p e -t "flash_archive" "$1"
+    _exit_failure 1
+}
+
 # mkdir_and_copy_file <file> <copy.path>
 # Copy file into dir (keeping file specified path)
 mkdir_and_copy_file() {
@@ -49,7 +55,7 @@ mkdir_and_copy_file() {
         [ -e "$NEW_FILE" ] && rm $NEW_FILE
         # Copy file
         if ! cp "$FILE" "$NEW_FILE"; then
-            _log_message "[ERROR][mkdir_and_copy_file] cp failed : $FILE $NEW_FILE"
+            exit_on_error "[ERROR][mkdir_and_copy_file] cp failed : $FILE $NEW_FILE"
         fi
     fi
 }
@@ -132,13 +138,13 @@ unzip_archive_in_tmp_dir() {
 
 remount_system_rw() {
     if ! mount -o rw,remount /system; then
-        _log_message "[ERROR][remount_system_rw] cannot remount system in rw"
+        exit_on_error "[ERROR][remount_system_rw] cannot remount system in rw"
     fi
 }
 
 remount_system_ro() {
     if ! mount -o ro,remount /system; then
-        _log_message "[ERROR][remount_system_ro] cannot remount system in ro"
+        exit_on_error "[ERROR][remount_system_ro] cannot remount system in ro"
     fi
 }
 
@@ -147,12 +153,6 @@ install_all_files() {
     do
         check_and_install_file "$i"
     done
-}
-
-exit_on_error() {
-    echo "$1" >&2
-    log -p e -t "flash_archive" "$1"
-    _exit_failure 1
 }
 
 ##########
@@ -169,7 +169,7 @@ flash_archive() {
     unzip_archive_in_tmp_dir "$ARCHIVE"
 
     if ! cd "$TMP_DIR"; then
-        _log_message "[ERROR][flash_archive] cd failed : $TMP_DIR"
+        exit_on_error "[ERROR][flash_archive] cd failed : $TMP_DIR"
     fi
 
     _log_message "[flash_archive] Remount /system/ in rw"
@@ -199,8 +199,7 @@ recovery_file() {
 
     # Copy file
     if ! cp "$FILE" "$NEW_FILE"; then
-        _log_message "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
-        return 1
+        exit_on_error "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
     else
         echo $(basename "$FILE") >> "$RECOVERY_FILE"
         return 0
