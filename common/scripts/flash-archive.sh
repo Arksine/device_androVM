@@ -194,16 +194,19 @@ recovery_file() {
     NEW_FILE=${RECOVERY_DIR}/$(basename "$FILE")
     mkdir -p "$RECOVERY_DIR"
 
-    # Remove previous file if exists
-    [ -e "$NEW_FILE" ] && rm "$NEW_FILE"
+    # if FILE is not from recovery, copy it into the recovery directory
+    if [ "$NEW_FILE" != "$FILE" ]; then
+        # Remove previous recovery file if it exists
+        [ -e "$NEW_FILE" ] && rm "$NEW_FILE"
 
-    # Copy file
-    if ! cp "$FILE" "$NEW_FILE"; then
-        exit_on_error "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
-    else
-        echo $(basename "$FILE") >> "$RECOVERY_FILE"
-        return 0
+        # Copy file
+        if ! cp "$FILE" "$NEW_FILE"; then
+            exit_on_error "[ERROR][recovery_file] cp failed : $FILE $NEW_FILE"
+        fi
     fi
+
+    # Add that file to the recovery list file
+    echo $(basename "$FILE") >> "$RECOVERY_FILE"
 }
 
 # check root access
