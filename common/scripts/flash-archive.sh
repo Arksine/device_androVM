@@ -137,14 +137,18 @@ unzip_archive_in_tmp_dir() {
 }
 
 remount_system_rw() {
+    # n.b.: mount will return 0 if already rw
     if ! mount -o rw,remount /system; then
         exit_on_error "[ERROR][remount_system_rw] cannot remount system in rw"
     fi
 }
 
 remount_system_ro() {
+    # Don't consider this step as an error if it fails because
+    # with some gapps packages, /system is "device or ressource busy" on remount
+    # after package installation
     if ! mount -o ro,remount /system; then
-        exit_on_error "[ERROR][remount_system_ro] cannot remount system in ro"
+        _log_message "[WARNING][remount_system_ro] cannot remount system in ro"
     fi
 }
 
