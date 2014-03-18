@@ -211,6 +211,9 @@ recovery_file() {
 
     # Add that file to the recovery list file
     echo $(basename "$FILE") >> "$RECOVERY_FILE"
+
+    # Ensure everything has been written
+    sync
 }
 
 # check root access
