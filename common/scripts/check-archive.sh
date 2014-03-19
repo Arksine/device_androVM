@@ -39,15 +39,31 @@ fi
         _exit_failure
     fi
 
-    ZIPFILE=$1
+    ZIPFILE="$1"
+    _log_message "File to check: $ZIPFILE"
+
+    DIRFILE=`dirname "$ZIPFILE"`
+    if [ ! -d "$DIRFILE" ]; then
+        _log_message "${DIRFILE}: no such directory"
+        _exit_failure
+    fi
+
+    LSDIR=`ls -lsa "$DIRFILE"`
+    _log_message "${DIRFILE}: content of directory:"
+    _log_message "$LSDIR"
+
+    if [ ! -e "$ZIPFILE" ]; then
+        _log_message "${ZIPFILE}: no such file"
+        _exit_failure
+    fi
 
     # Check if argument is an .zip archive
     case "$ZIPFILE" in
         *.zip)
-            _log_message "$ZIPFILE seems to be a zip archive";
+            _log_message "${ZIPFILE}: this file seems to be a zip archive";
             ;;
         *)
-            _log_message "Sorry "$ZIPFILE" doesn't seem to be a zip archive"
+            _log_message "${ZIPFILE}: this file doesn't seem to be a zip archive"
             _exit_failure
     esac
 
