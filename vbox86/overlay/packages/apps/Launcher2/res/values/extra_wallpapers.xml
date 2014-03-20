@@ -18,6 +18,8 @@
 <resources>
     <string-array name="extra_wallpapers" translatable="false">
         <!--    Genymotion    -->
+        <item>pissenli</item>
+        <item>default</item>
         <item>flocon</item>
         <item>noel</item>
         <item>movember</item>
