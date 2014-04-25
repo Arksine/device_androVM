@@ -375,6 +375,11 @@ static int gralloc_free(alloc_device_t* dev,
         DEFINE_AND_VALIDATE_HOST_CONNECTION;
         D("Closing host ColorBuffer 0x%x\n", cb->hostHandle);
         rcEnc->rcCloseColorBuffer(rcEnc, cb->hostHandle);
+        if (usage & GRALLOC_USAGE_HW_COMPOSER) {
+            // Send second close command to avoid leakage
+            // from graphic buffer allocated by SurfaceFlinger
+            rcEnc->rcCloseColorBuffer(rcEnc, cb->hostHandle);
+        }
     }
 
     //
