@@ -296,6 +296,11 @@ static int gralloc_free(alloc_device_t* dev,
         DEFINE_AND_VALIDATE_HOST_CONNECTION;
         D("Closing host ColorBuffer 0x%x\n", cb->hostHandle);
         rcEnc->rcCloseColorBuffer(rcEnc, cb->hostHandle);
+        if (cb->usage & GRALLOC_USAGE_HW_COMPOSER) {
+            // Send second close command to avoid leakage
+            // from graphic buffer allocated by SurfaceFlinger
+            rcEnc->rcCloseColorBuffer(rcEnc, cb->hostHandle);
+        }
     }
 
     //
@@ -316,18 +321,18 @@ static int gralloc_free(alloc_device_t* dev,
         n = n->next;
     }
     if (n) {
-       // buffer found on list - remove it from list
-       if (n->next) {
-           n->next->prev = n->prev;
-       }
-       if (n->prev) {
-           n->prev->next = n->next;
-       }
-       else {
-           grdev->allocListHead = n->next;
-       }
+        // buffer found on list - remove it from list
+        if (n->next) {
+            n->next->prev = n->prev;
+        }
+        if (n->prev) {
+            n->prev->next = n->next;
+        }
+        else {
+            grdev->allocListHead = n->next;
+        }
 
-       delete n;
+        delete n;
     }
     pthread_mutex_unlock(&grdev->lock);
 

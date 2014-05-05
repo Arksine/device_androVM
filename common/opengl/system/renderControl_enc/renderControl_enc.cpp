@@ -296,6 +296,8 @@ void rcCloseColorBuffer_enc(void *self , uint32_t colorbuffer)
 	*(unsigned int *)(ptr) = OP_rcCloseColorBuffer; ptr += 4;
 	*(unsigned int *)(ptr) = (unsigned int) packetSize; ptr += 4;
 	*(uint32_t *) (ptr) = colorbuffer; ptr += 4;
+
+        stream->flush();
 }
 
 void rcSetWindowColorBuffer_enc(void *self , uint32_t windowSurface, uint32_t colorBuffer)
@@ -523,4 +525,3 @@ renderControl_encoder_context_t::renderControl_encoder_context_t(IOStream *strea
 	set_rcUpdateColorBuffer(rcUpdateColorBuffer_enc);
 	set_rcSetOrientation(rcSetOrientation_enc);
 }
-
