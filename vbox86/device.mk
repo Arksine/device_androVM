@@ -36,6 +36,7 @@ PRODUCT_COPY_FILES := \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
+    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
     device/androVM/vbox86/fstab.vbox86:root/fstab.vbox86 \
     device/androVM/vbox86/vold.conf:system/etc/vold.conf \
     device/androVM/vbox86/media_profiles.xml:system/etc/media_profiles.xml \
@@ -114,6 +115,7 @@ PRODUCT_PACKAGES += \
     libFFmpegExtractor \
     libstagefright_soft_ffmpegadec \
     libstagefright_soft_ffmpegvdec \
+    com.android.future.usb.accessory \
 
 -include device/androVM/private/genymotion-private.mk
 
