@@ -26,8 +26,6 @@ PRODUCT_PROPERTY_OVERRIDES := \
 
 PRODUCT_AAPT_CONFIG := normal ldpi mdpi hdpi xhdpi xxhdpi
 
-LOCAL_KERNEL := device/androVM/vbox86/kernel-vbox86
-
 PRODUCT_COPY_FILES := \
     frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
@@ -46,15 +44,7 @@ PRODUCT_COPY_FILES := \
     device/androVM/vbox86/init.vbox86.rc:root/init.vbox86.rc \
     device/androVM/vbox86/ueventd.vbox86.rc:root/ueventd.vbox86.rc \
     device/androVM/vbox86/init.androVM.sh:system/etc/init.androVM.sh \
-    $(LOCAL_KERNEL):kernel \
     device/androVM/vbox86/dhcpcd.conf:system/etc/dhcpcd/dhcpcd.conf \
-    device/androVM/vbox86/vbox/vboxguest.ko:system/lib/vboxguest.ko \
-    device/androVM/vbox86/vbox/vboxsf.ko:system/lib/vboxsf.ko \
-    device/androVM/vbox86/vbox/vboxvideo.ko:system/lib/vboxvideo.ko \
-    device/androVM/vbox86/uvesafb.ko:system/lib/uvesafb.ko \
-    device/androVM/vbox86/cfbcopyarea.ko:system/lib/cfbcopyarea.ko \
-    device/androVM/vbox86/cfbfillrect.ko:system/lib/cfbfillrect.ko \
-    device/androVM/vbox86/cfbimgblt.ko:system/lib/cfbimgblt.ko \
     frameworks/base/data/keyboards/qwerty.kl:system/usr/keylayout/AT_Translated_Set_2_keyboard.kl \
     device/androVM/vbox86/androVM_Virtual_Input.kl:system/usr/keylayout/androVM_Virtual_Input.kl \
     device/androVM/vbox86/wpa_supplicant.conf:data/misc/wifi/wpa_supplicant.conf \
@@ -117,3 +107,6 @@ PRODUCT_PACKAGES += \
 -include device/androVM/private/genymotion-private.mk
 
 $(call inherit-product-if-exists,frameworks/base/build/tablet-dalvik-heap.mk)
+$(call inherit-product-if-exists,vendor/intel/intel.mk)
+$(call inherit-product-if-exists,vendor/google/google.mk)
+$(call inherit-product-if-exists,vendor/max/maxters.mk)

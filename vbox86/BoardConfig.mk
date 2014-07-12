@@ -60,3 +60,8 @@ USE_OPENGL_RENDERER := true
 
 #HOUDINI
 INTEL_HOUDINI := true
+
+# Kernel
+TARGET_KERNEL_SOURCE := kernel/goldfish
+TARGET_KERNEL_CONFIG := vbox_defconfig
+BOARD_KERNEL_IMAGE_NAME := bzImage
